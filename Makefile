@@ -9,4 +9,4 @@ start:
 generate: 
 	go run github.com/99designs/gqlgen generate
 build: 
-	go build -o bin/main . 
+	go build -o bin/main .
