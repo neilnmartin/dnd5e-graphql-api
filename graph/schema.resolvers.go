@@ -11,11 +11,27 @@ import (
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/model"
 )
 
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+func (r *mutationResolver) SignUpUser(ctx context.Context, input model.UserInput) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
+func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Character(ctx context.Context) (*model.Character, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Race(ctx context.Context) (*model.Race, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Class(ctx context.Context) (*model.Class, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Spell(ctx context.Context) (*model.Spell, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

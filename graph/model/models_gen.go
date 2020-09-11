@@ -2,19 +2,53 @@
 
 package model
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+type Character struct {
+	User  *User  `json:"user"`
+	Race  *Race  `json:"race"`
+	Class *Class `json:"class"`
 }
 
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
+type Class struct {
+	ID            string   `json:"id"`
+	Name          string   `json:"name"`
+	Description   *string  `json:"description"`
+	Proficiencies *string  `json:"proficiencies"`
+	Spells        []*Spell `json:"spells"`
+}
+
+type Name struct {
+	GivenName  *string `json:"givenName"`
+	FamilyName *string `json:"familyName"`
+	Formatted  *string `json:"formatted"`
+}
+
+type NameInput struct {
+	GivenName  *string `json:"givenName"`
+	FamilyName *string `json:"familyName"`
+}
+
+type Race struct {
+	ID          string  `json:"id"`
+	Name        string  `json:"name"`
+	Description *string `json:"description"`
+	Perks       *string `json:"perks"`
+}
+
+type Spell struct {
+	ID          string  `json:"id"`
+	Name        *string `json:"name"`
+	Description *string `json:"description"`
+	Range       *string `json:"range"`
 }
 
 type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID       string `json:"id"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type UserInput struct {
+	Name     *NameInput `json:"name"`
+	Email    *string    `json:"email"`
+	Password *string    `json:"password"`
 }
