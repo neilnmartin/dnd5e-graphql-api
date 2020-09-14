@@ -13,32 +13,133 @@ type Name {
   formatted: String
 }
 
+type Language {
+  id: ID!
+  name: String!
+}
+
+type SubRace {
+  id: ID!
+  race: Race!
+  name: String!
+}
+
 type Race {
   id: ID!
   name: String!
-  description: String
+  description: [String]
+  abilityBonuses: AbilityBonus
   perks: String
+  subRaces: [SubRace!]
+  age: String
+  startingProficiencies: [String]
+  startingProficiencyOptions: [String]
+  languages: [Language]
+  languageOptions: [Language]
+  languageDescription: String
+  traits: [Trait]
+  traitOptions: [Trait]
+}
+
+
+type SubClass {
+  id: ID
+  name: String
+  class: String
+}
+
+type Ability {
+  id: ID
+  # score?
+  name: String
+  description: [String]
+  skills: [Skill]
+}
+
+type AbilityBonus {
+  ability: Ability
+  bonus: String
+}
+
+type Skill {
+  id: ID
+  name: String
+}
+
+type Trait {
+  id: ID
+  races: [Race]
+  subRaces: [SubRace]
+  name: String
+  description: [String]
 }
 
 type Class {
-  id: ID!
-  name: String!
-  description: String
-  proficiencies: String
-  spells: [Spell]
+  id: ID
+  name: String
+  hitDie: Int
+  proficiencyChoices: [Skill]
+  proficiencies:[Skill]
+  savingThrows: [Ability]
+  startingEquipment: StartingEquipment
+  classLevels: [ClassLevel]
+  subClasses: [SubClass]
+  spellcasting: Ability
+  url: String
 }
+
+type ClassLevel {
+  level: Int
+  class: Class
+  features: [Feature]
+}
+
+type Feature {
+  id: ID
+  name: String
+  description: [String]
+}
+
+type Equipment {
+  name: String
+  category: String # Weapon, Armor, Tools
+
+}
+
+type StartingEquipment {
+  class: Class
+  startingEquipment: [Equipment]
+  startingEquipmentOptions: [Equipment]
+}
+
 
 type Spell {
   id: ID!
-  name: String
-  description: String
-  range: String
+  name: String!
+  description: [String!]
+  higherLevel: [String]
+  range: String!
+  components: [String]
+  material: String
+  ritual: Boolean
+  duration: String
+  concentration: String
 }
 
 type Character {
-  user: User
-  race: Race
-  class: Class
+  id: ID
+  user: User!
+  ##
+  name: String!
+  age: Int!
+  level: Int!
+  ##
+  race: Race!
+  subRace: SubRace
+  class: Class!
+  subClass: SubClass
+  traits: [Trait]
+  equipment: [Equipment]
 }
 
 type Query {
