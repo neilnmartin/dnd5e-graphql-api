@@ -64,6 +64,16 @@ type Language struct {
 	Name string `json:"name"`
 }
 
+type LoginInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type LoginResponse struct {
+	User  *User  `json:"user"`
+	Token string `json:"token"`
+}
+
 type Name struct {
 	GivenName  string  `json:"givenName"`
 	FamilyName string  `json:"familyName"`

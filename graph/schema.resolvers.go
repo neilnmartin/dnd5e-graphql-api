@@ -19,6 +19,10 @@ func (r *mutationResolver) SignUpUser(ctx context.Context, input model.UserInput
 	return &sampleUser, nil
 }
 
+func (r *mutationResolver) LoginUser(ctx context.Context, input model.LoginInput) (*model.LoginResponse, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }

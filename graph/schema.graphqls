@@ -156,6 +156,17 @@ input UserInput {
   email: String!
   password: String!
 }
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type LoginResponse {
+  user: User!
+  token: String!
+}
+
 input NameInput {
   givenName: String!
   familyName: String!
@@ -163,4 +174,5 @@ input NameInput {
 
 type Mutation {
   signUpUser(input: UserInput!): User!
+  loginUser(input: LoginInput!): LoginResponse
 }
