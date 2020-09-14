@@ -1,0 +1,7 @@
+@startuml SignUpFlow
+client -> api: loginUser mutation
+api -> api: validate email input, check if existing user
+api -> client: if existing user compare password hash
+api -> api: if no match throw 401 error
+api --> client: return user and token
+@enduml
