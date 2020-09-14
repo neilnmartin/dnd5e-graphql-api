@@ -1,6 +1,12 @@
 # dnd5e-graphql-api
 graphql api for DnD 5e built with Go
 
+instructions to run locally: 
+  - git clone
+  - go get
+  - make generate
+  - make start
+
 Tools and packages: 
   - graphql-go
   - gqlgen for generation of schema
