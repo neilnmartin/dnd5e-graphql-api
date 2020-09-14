@@ -12,7 +12,11 @@ import (
 )
 
 func (r *mutationResolver) SignUpUser(ctx context.Context, input model.UserInput) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
+	sampleUser := model.User{
+		ID:    "sampleid",
+		Email: "sampleemail@email.com",
+	}
+	return &sampleUser, nil
 }
 
 func (r *queryResolver) User(ctx context.Context) (*model.User, error) {

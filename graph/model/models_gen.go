@@ -2,53 +2,148 @@
 
 package model
 
+type Ability struct {
+	ID          *string   `json:"id"`
+	Name        *string   `json:"name"`
+	Description []*string `json:"description"`
+	Skills      []*Skill  `json:"skills"`
+}
+
+type AbilityBonus struct {
+	Ability *Ability `json:"ability"`
+	Bonus   *string  `json:"bonus"`
+}
+
 type Character struct {
-	User  *User  `json:"user"`
-	Race  *Race  `json:"race"`
-	Class *Class `json:"class"`
+	ID        *string      `json:"id"`
+	User      *User        `json:"user"`
+	Name      string       `json:"name"`
+	Age       int          `json:"age"`
+	Level     int          `json:"level"`
+	Race      *Race        `json:"race"`
+	SubRace   *SubRace     `json:"subRace"`
+	Class     *Class       `json:"class"`
+	SubClass  *SubClass    `json:"subClass"`
+	Traits    []*Trait     `json:"traits"`
+	Equipment []*Equipment `json:"equipment"`
 }
 
 type Class struct {
-	ID            string   `json:"id"`
-	Name          string   `json:"name"`
-	Description   *string  `json:"description"`
-	Proficiencies *string  `json:"proficiencies"`
-	Spells        []*Spell `json:"spells"`
+	ID                 *string            `json:"id"`
+	Name               *string            `json:"name"`
+	HitDie             *int               `json:"hitDie"`
+	ProficiencyChoices []*Skill           `json:"proficiencyChoices"`
+	Proficiencies      []*Skill           `json:"proficiencies"`
+	SavingThrows       []*Ability         `json:"savingThrows"`
+	StartingEquipment  *StartingEquipment `json:"startingEquipment"`
+	ClassLevels        []*ClassLevel      `json:"classLevels"`
+	SubClasses         []*SubClass        `json:"subClasses"`
+	Spellcasting       *Ability           `json:"spellcasting"`
+	URL                *string            `json:"url"`
+}
+
+type ClassLevel struct {
+	Level    *int       `json:"level"`
+	Class    *Class     `json:"class"`
+	Features []*Feature `json:"features"`
+}
+
+type Equipment struct {
+	Name     *string `json:"name"`
+	Category *string `json:"category"`
+}
+
+type Feature struct {
+	ID          *string   `json:"id"`
+	Name        *string   `json:"name"`
+	Description []*string `json:"description"`
+}
+
+type Language struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type Name struct {
-	GivenName  *string `json:"givenName"`
-	FamilyName *string `json:"familyName"`
+	GivenName  string  `json:"givenName"`
+	FamilyName string  `json:"familyName"`
 	Formatted  *string `json:"formatted"`
 }
 
 type NameInput struct {
-	GivenName  *string `json:"givenName"`
-	FamilyName *string `json:"familyName"`
+	GivenName  string `json:"givenName"`
+	FamilyName string `json:"familyName"`
 }
 
 type Race struct {
-	ID          string  `json:"id"`
-	Name        string  `json:"name"`
-	Description *string `json:"description"`
-	Perks       *string `json:"perks"`
+	ID                         string        `json:"id"`
+	Name                       string        `json:"name"`
+	Description                []*string     `json:"description"`
+	AbilityBonuses             *AbilityBonus `json:"abilityBonuses"`
+	Perks                      *string       `json:"perks"`
+	SubRaces                   []*SubRace    `json:"subRaces"`
+	Age                        *string       `json:"age"`
+	StartingProficiencies      []*string     `json:"startingProficiencies"`
+	StartingProficiencyOptions []*string     `json:"startingProficiencyOptions"`
+	Languages                  []*Language   `json:"languages"`
+	LanguageOptions            []*Language   `json:"languageOptions"`
+	LanguageDescription        *string       `json:"languageDescription"`
+	Traits                     []*Trait      `json:"traits"`
+	TraitOptions               []*Trait      `json:"traitOptions"`
+}
+
+type Skill struct {
+	ID   *string `json:"id"`
+	Name *string `json:"name"`
 }
 
 type Spell struct {
-	ID          string  `json:"id"`
-	Name        *string `json:"name"`
-	Description *string `json:"description"`
-	Range       *string `json:"range"`
+	ID            string    `json:"id"`
+	Name          string    `json:"name"`
+	Description   []string  `json:"description"`
+	HigherLevel   []*string `json:"higherLevel"`
+	Range         string    `json:"range"`
+	Components    []*string `json:"components"`
+	Material      *string   `json:"material"`
+	Ritual        *bool     `json:"ritual"`
+	Duration      *string   `json:"duration"`
+	Concentration *string   `json:"concentration"`
+}
+
+type StartingEquipment struct {
+	Class                    *Class       `json:"class"`
+	StartingEquipment        []*Equipment `json:"startingEquipment"`
+	StartingEquipmentOptions []*Equipment `json:"startingEquipmentOptions"`
+}
+
+type SubClass struct {
+	ID    *string `json:"id"`
+	Name  *string `json:"name"`
+	Class *string `json:"class"`
+}
+
+type SubRace struct {
+	ID   string `json:"id"`
+	Race *Race  `json:"race"`
+	Name string `json:"name"`
+}
+
+type Trait struct {
+	ID          *string    `json:"id"`
+	Races       []*Race    `json:"races"`
+	SubRaces    []*SubRace `json:"subRaces"`
+	Name        *string    `json:"name"`
+	Description []*string  `json:"description"`
 }
 
 type User struct {
-	ID       string `json:"id"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	ID    string `json:"id"`
+	Email string `json:"email"`
+	Name  *Name  `json:"name"`
 }
 
 type UserInput struct {
 	Name     *NameInput `json:"name"`
-	Email    *string    `json:"email"`
-	Password *string    `json:"password"`
+	Email    string     `json:"email"`
+	Password string     `json:"password"`
 }
