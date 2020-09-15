@@ -15,59 +15,38 @@ type mongoDatasource struct {
 
 // UserMongo struct
 type UserMongo struct {
-	ID        bson.ObjectId `json:"id" bson:"_id"`
-	FirstName string        `json:"firstName" bson:"firstName"`
-	LastName  string        `json:"lastName" bson:"lastName"`
-	Password  string        `json:"password" bson:"password"`
-}
-
-// CharacterMongo Struct
-type CharacterMongo struct {
-	ID       bson.ObjectId `json:"id"`
-	Name     string        `json:"name"`
-	Age      int           `json:"age"`
-	ImageURL string        `json:"imageUrl"`
-}
-
-func createMongoDataSource() mongoDatasource {
-
-	session, err := mgo.Dial("127.0.0.1:27017")
-	if err != nil {
-		panic(err)
-	}
-
-	return mongoDatasource{
-		session,
-	}
+	ID         bson.ObjectId `json:"id" bson:"_id"`
+	Email      string        `json:"email" bson:"email"`
+	GivenName  string        `json:"givenName" bson:"givenName"`
+	FamilyName string        `json:"familyName" bson:"familyName"`
+	Password   string        `json:"password" bson:"password"`
 }
 
 func (m mongoDatasource) CreateUser(ui domain.User) domain.User {
 
 	u := UserMongo{
-		ID:        bson.NewObjectId(),
-		FirstName: ui.Name.GivenName,
-		LastName:  ui.Name.FamilyName,
-		Password:  ui.Password,
+		ID:         bson.NewObjectId(),
+		GivenName:  ui.Name.GivenName,
+		FamilyName: ui.Name.FamilyName,
+		Password:   ui.Password,
 	}
 
 	m.session.DB("rest-game").C("users").Insert(u)
 	m.session.DB("rest-game").C("users").FindId(u.ID).One(&u)
 
+	// convert to domain user
 	ur := domain.User{
-		ID:        u.ID.Hex(),
-		FirstName: u.FirstName,
-		LastName:  u.LastName,
+		ID:    u.ID.Hex(),
+		Email: u.Email,
+		Name: domain.Name{
+			GivenName:  u.GivenName,
+			FamilyName: u.FamilyName,
+		},
 	}
 
 	return ur
 }
 
-func (m mongoDatasource) CreateCharacter() {
-
-}
-func (m mongoDatasource) CreateGame() {
-
-}
 func (m mongoDatasource) ReadUser(ui domain.User) domain.User {
 	fmt.Printf("ID %v", ui.ID)
 	fmt.Printf("ID TYPE %T", ui.ID)
@@ -78,44 +57,29 @@ func (m mongoDatasource) ReadUser(ui domain.User) domain.User {
 	}
 
 	u := UserMongo{
-		ID:        bson.ObjectIdHex(ui.ID),
-		FirstName: ui.FirstName,
-		LastName:  ui.LastName,
-		Password:  ui.Password,
+		ID:         bson.ObjectIdHex(ui.ID),
+		GivenName:  ui.GivenName,
+		FamilyName: ui.FamilyName,
+		Password:   ui.Password,
 	}
 
 	m.session.DB("rest-game").C("users").FindId(u.ID).One(&u)
 
 	ur := domain.User{
-		ID:        u.ID.Hex(),
-		FirstName: u.FirstName,
-		LastName:  u.LastName,
-		Password:  u.Password,
+		ID: u.ID.Hex(),
+		Name: domain.Name{
+			GivenName:  u.GivenName,
+			FamilyName: u.FamilyName,
+		},
+		Password: u.Password,
 	}
 
 	return ur
 }
-func (m mongoDatasource) ReadCharacter() {
-
-}
-func (m mongoDatasource) ReadGame() {
-
-}
 func (m mongoDatasource) UpdateUser() {
 
 }
-func (m mongoDatasource) UpdateCharacter() {
 
-}
-func (m mongoDatasource) UpdateGame() {
-
-}
 func (m mongoDatasource) DeleteUser() {
-
-}
-func (m mongoDatasource) DeleteCharacter() {
-
-}
-func (m mongoDatasource) DeleteGame() {
 
 }
