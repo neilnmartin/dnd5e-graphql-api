@@ -18,5 +18,5 @@ type Name struct {
 
 // UserRepo describes the user repository with User related methods
 type UserRepo interface {
-	CreateUser()
+	CreateUser(u User) User
 }
