@@ -34,6 +34,6 @@ func SignUpUser(email string, password string, name Name, userRepo domain.UserRe
 			FamilyName: name.familyName,
 		},
 	}
-	user := userRepo.CreateUser(nu)
+	user := repos.CreateUser(nu)
 	return user
 }
