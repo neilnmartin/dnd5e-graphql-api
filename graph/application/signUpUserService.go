@@ -1,8 +1,9 @@
-package mutation
+package application
 
 import (
 	"fmt"
 	"log"
+	"regexp"
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
 	"golang.org/x/crypto/bcrypt"
@@ -17,7 +18,10 @@ type Name struct {
 // SignUpUser signs up a user by adding to the database after validating name email and password inputs
 func SignUpUser(email string, password string, name Name, userRepo domain.UserRepo) domain.User {
 	// check existing user: TODO
-
+	validEail := regexp.MustCompile(``)
+	if !validEail.MatchString(email) {
+		log.Fatal("not a valid email")
+	}
 	hpw, err := bcrypt.GenerateFromPassword([]byte(password), 5)
 	if err != nil {
 		log.Printf(err.Error())
@@ -34,6 +38,7 @@ func SignUpUser(email string, password string, name Name, userRepo domain.UserRe
 			FamilyName: name.familyName,
 		},
 	}
-	user := repos.CreateUser(nu)
+
+	user := db.CreateUser(nu)
 	return user
 }
