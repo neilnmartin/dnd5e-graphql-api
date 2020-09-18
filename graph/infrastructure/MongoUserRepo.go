@@ -3,13 +3,14 @@ package infrastructure
 import (
 	"fmt"
 
+	"gopkg.in/mgo.v2"
+
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
 )
 
-// UserMongo struct
-type UserMongo struct {
+type userMongo struct {
 	ID         bson.ObjectId `json:"id" bson:"_id"`
 	Email      string        `json:"email" bson:"email"`
 	GivenName  string        `json:"givenName" bson:"givenName"`
@@ -18,17 +19,14 @@ type UserMongo struct {
 }
 
 // MongoUserRepo is the mongodb infrastructure implementation of the UserRepo domain interface
-type MongoUserRepo interface {
-	CreateUser(domain.User) domain.User
-	GetUserByEmail(email string) domain.User
-	GetUserByID(domain.User) domain.User
-	UpdateUser(domain.User) domain.User
-	DeleteUser(domain.User) bool
+type MongoUserRepo struct {
+	session *mgo.Session
 }
 
-func (m mongoDatasource) CreateUser(ui domain.User) domain.User {
+// CreateUser will create a domain User in the database
+func (m MongoUserRepo) CreateUser(ui domain.User) domain.User {
 
-	u := UserMongo{
+	u := userMongo{
 		ID:         bson.NewObjectId(),
 		GivenName:  ui.Name.GivenName,
 		FamilyName: ui.Name.FamilyName,
@@ -51,7 +49,8 @@ func (m mongoDatasource) CreateUser(ui domain.User) domain.User {
 	return ur
 }
 
-func (m mongoDatasource) GetUserByID(ui domain.User) domain.User {
+// GetUserByID will receive a domain User and return a domain User with a matching id
+func (m MongoUserRepo) GetUserByID(ui domain.User) domain.User {
 	fmt.Printf("ID %v", ui.ID)
 	fmt.Printf("ID TYPE %T", ui.ID)
 
@@ -60,7 +59,7 @@ func (m mongoDatasource) GetUserByID(ui domain.User) domain.User {
 		fmt.Println("not a valid hex")
 	}
 
-	u := UserMongo{
+	u := userMongo{
 		ID:         bson.ObjectIdHex(ui.ID),
 		GivenName:  ui.GivenName,
 		FamilyName: ui.FamilyName,
@@ -81,11 +80,12 @@ func (m mongoDatasource) GetUserByID(ui domain.User) domain.User {
 	return ur
 }
 
-func (m mongoDatasource) GetUserByEmail(e string) domain.User {
+// GetUserByEmail will accept an email and find a user with a matching email in the database
+func (m MongoUserRepo) GetUserByEmail(e string) domain.User {
 	fmt.Printf("email %v", e)
 	fmt.Printf("email TYPE %T", e)
 
-	u := UserMongo{
+	u := userMongo{
 		Email: e,
 	}
 
@@ -102,13 +102,15 @@ func (m mongoDatasource) GetUserByEmail(e string) domain.User {
 
 	return ur
 }
-func (m mongoDatasource) UpdateUser(ui domain.User) domain.User {
+
+// UpdateUser will find and update a database user with the updated values of a domain User
+func (m MongoUserRepo) UpdateUser(ui domain.User) domain.User {
 	i := bson.IsObjectIdHex(ui.ID)
 	if !i {
 		fmt.Println("not a valid hex")
 	}
 
-	u := UserMongo{
+	u := userMongo{
 		ID:         bson.ObjectIdHex(ui.ID),
 		GivenName:  ui.Name.GivenName,
 		FamilyName: ui.Name.FamilyName,
@@ -129,6 +131,7 @@ func (m mongoDatasource) UpdateUser(ui domain.User) domain.User {
 	return ur
 }
 
-func (m mongoDatasource) DeleteUser(ui domain.User) bool {
+// DeleteUser will delete a user and return a boolean indicating success or failure
+func (m MongoUserRepo) DeleteUser(ui domain.User) bool {
 	return false
 }

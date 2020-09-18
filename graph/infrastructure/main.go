@@ -5,8 +5,8 @@ import (
 )
 
 // A Datasource that implements a data repository with CRUD for each resource
-type Datasource interface {
-	MongoUserRepo
+type Datasource struct {
+	UserRepo MongoUserRepo
 }
 type mongoDatasource struct {
 	session *mgo.Session
@@ -24,12 +24,18 @@ func DatasourceFactory(p string) Datasource {
 	}
 }
 
-func createMongoDataSource() mongoDatasource {
-	session, err := mgo.Dial("127.0.0.1:27017")
+func createMongoDataSource() Datasource {
+	session, err := mgo.Dial("")
 	if err != nil {
 		panic(err)
 	}
-	return mongoDatasource{
-		session,
+	mur := MongoUserRepo{
+		session: session,
+	}
+	return Datasource{
+		UserRepo: mur,
 	}
 }
+
+// DB is the actual data source
+var DB = DatasourceFactory("mongodb")
