@@ -26,11 +26,10 @@ Considerations:
   Deployment: Google App Engine?
   
   Base product goals: 
-  - have public graphql api
-  - sign up
-  - log in
-  - update user details
-  - create a character
-  - load and update character
+  - have public graphql api for dungeons and dragons 5th edition information
+  - basic signup/login auth functionality
+  - user detail management
+  - character creation
+  - character details management
 
 
