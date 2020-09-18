@@ -7,6 +7,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/neilnmartin/dnd5e-graphql-api/graph/application"
+	"github.com/neilnmartin/dnd5e-graphql-api/graph/infrastructure"
+
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/generated"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/model"
 )
@@ -20,7 +23,13 @@ func (r *mutationResolver) SignUpUser(ctx context.Context, input model.UserInput
 }
 
 func (r *mutationResolver) LoginUser(ctx context.Context, input model.LoginInput) (*model.LoginResponse, error) {
-	panic(fmt.Errorf("not implemented"))
+	l := application.LogInUser(input.Email, input.Password)
+	return &model.LoginResponse{
+		User: &model.User{
+			Email: l.User.Email,
+		},
+		// Token: l.Token,
+	}, nil
 }
 
 func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
@@ -32,7 +41,8 @@ func (r *queryResolver) Character(ctx context.Context) (*model.Character, error)
 }
 
 func (r *queryResolver) Race(ctx context.Context) (*model.Race, error) {
-	panic(fmt.Errorf("not implemented"))
+	race := infrastructure.DB.GetRaceById(input.id)
+	return race, nil
 }
 
 func (r *queryResolver) Class(ctx context.Context) (*model.Class, error) {
