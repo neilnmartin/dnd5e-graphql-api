@@ -1,9 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
-	"github.com/neilnmartin/dnd5e-graphql-api/config"
 	"gopkg.in/mgo.v2"
 )
 
@@ -13,7 +10,9 @@ type Datasource struct {
 	RaceRepo raceMongoRepo
 }
 
-// DatasourceFactory creates a Datasource interface
+// DatasourceFactory creates a Datasource based on a string input p
+// p will identify the persistence infrastructure used
+// eg. in this case "mongodb"
 func DatasourceFactory(p string) Datasource {
 	switch p {
 	// only one implementation so far
@@ -26,8 +25,6 @@ func DatasourceFactory(p string) Datasource {
 }
 
 func createMongoDataSource() Datasource {
-	fmt.Printf("Hello ENV variable in repo main: %v", config.Config.Hello)
-	fmt.Printf("Anything variable in repo main: %v", config.Anything)
 	session, err := mgo.Dial("")
 	if err != nil {
 		panic(err)
@@ -35,8 +32,12 @@ func createMongoDataSource() Datasource {
 	umr := userMongoRepo{
 		session: session,
 	}
+	rmr := raceMongoRepo{
+		session: session,
+	}
 	return Datasource{
 		UserRepo: umr,
+		RaceRepo: rmr,
 	}
 }
 
