@@ -25,7 +25,7 @@ Start server
 
   SQL database. A lot of the data types are relational BUT there are a number of data objects that have arbitrary properties based on class/race/equipment etc. that may not be predictable as updates to 5E are rolled out. I need the schema to be easily mutable, therefore need a document store. Also a lot of the aggregate queries could be incredibly slow, potentially.
 
-  Identity management: currently the plan is to have boilerplate auth flows within the graphql api. But in the future may consider splitting into a federation (since gqlgen has support for that with a config) and having a dedicated identity microservice OR having a dedicated idp but that is only if my wildest dreams come true.
+  Identity management: currently the plan is to have boilerplate auth flows within the graphql api. But in the future may consider splitting into a federation (since gqlgen has support for that with a config) and having a dedicated identity microservice.
 
   Deployment: Google App Engine?
   
