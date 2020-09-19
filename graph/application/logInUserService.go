@@ -10,7 +10,7 @@ import (
 
 // LogInResponse consists of the logged in User as well as the token
 type LogInResponse struct {
-	User  domain.User
+	User  *domain.User
 	token string
 }
 
@@ -18,7 +18,7 @@ type LogInResponse struct {
 func LogInUser(email string, password string) LogInResponse {
 	fmt.Println("reached login service")
 
-	dbu := db.GetUserByEmail(email)
+	dbu := db.UserRepo.GetUserByEmail(email)
 	hpw := []byte(dbu.Password)
 	err := bcrypt.CompareHashAndPassword(hpw, []byte(password))
 	if err != nil {
@@ -26,7 +26,7 @@ func LogInUser(email string, password string) LogInResponse {
 	}
 
 	return LogInResponse{
-		User:  dbu,
+		User:  &dbu,
 		token: "token",
 	}
 }

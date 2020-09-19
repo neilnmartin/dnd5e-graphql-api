@@ -5,10 +5,12 @@ package graph
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/application"
-	"github.com/neilnmartin/dnd5e-graphql-api/graph/infrastructure"
+	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
+	"github.com/neilnmartin/dnd5e-graphql-api/graph/repository"
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/generated"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/model"
@@ -41,8 +43,16 @@ func (r *queryResolver) Character(ctx context.Context) (*model.Character, error)
 }
 
 func (r *queryResolver) Race(ctx context.Context) (*model.Race, error) {
-	race := infrastructure.DB.GetRaceById(input.id)
-	return race, nil
+	var race domain.Race
+	if input.id != nil {
+		race = repository.DB.GetRaceById(input.id)
+		return race, nil
+	} else if input.name != nil {
+		race = repository.DB.GetRaceByName(input.name)
+		return race, nil
+	} else {
+		return nil, errors.New("Could not find Race")
+	}
 }
 
 func (r *queryResolver) Class(ctx context.Context) (*model.Class, error) {
