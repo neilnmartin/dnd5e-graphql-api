@@ -1,7 +1,7 @@
 package application
 
 import (
-	"github.com/neilnmartin/dnd5e-graphql-api/graph/infrastructure"
+	"github.com/neilnmartin/dnd5e-graphql-api/graph/repository"
 )
 
-var db = infrastructure.DB
+var db = repository.DB
