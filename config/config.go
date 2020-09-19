@@ -9,16 +9,30 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var hello string
-var mongoURL string
-var mongoUser string
-var mongoPass string
+type appConfig struct {
+	Hello string
+}
 
-func main() {
-	err := godotenv.Load("../.env")
+// Anything test
+var Anything = "anything"
+
+func new() *appConfig {
+	var Config appConfig
+	fmt.Println("config main is running")
+	err := godotenv.Load()
 	if err != nil {
 		log.Printf("%v", errors.New("Could not load .env"))
 	}
-	hello = os.Getenv("HELLO")
-	fmt.Printf("%v", hello)
+	if Hello, exists := os.LookupEnv("MONGO_URL"); exists {
+		fmt.Println("config load env hello", Hello)
+		Config = appConfig{
+			Hello,
+		}
+		return &Config
+	}
+	fmt.Println("could not find hello")
+	return nil
 }
+
+// Config holds the application config variables
+var Config = new()

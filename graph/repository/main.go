@@ -1,6 +1,9 @@
 package repository
 
 import (
+	"fmt"
+
+	"github.com/neilnmartin/dnd5e-graphql-api/config"
 	"gopkg.in/mgo.v2"
 )
 
@@ -23,6 +26,8 @@ func DatasourceFactory(p string) Datasource {
 }
 
 func createMongoDataSource() Datasource {
+	fmt.Printf("Hello ENV variable in repo main: %v", config.Config.Hello)
+	fmt.Printf("Anything variable in repo main: %v", config.Anything)
 	session, err := mgo.Dial("")
 	if err != nil {
 		panic(err)
