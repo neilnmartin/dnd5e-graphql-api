@@ -1,4 +1,4 @@
-package infrastructure
+package repository
 
 import (
 	"gopkg.in/mgo.v2"
@@ -6,10 +6,8 @@ import (
 
 // A Datasource that implements a data repository with CRUD for each resource
 type Datasource struct {
-	UserRepo MongoUserRepo
-}
-type mongoDatasource struct {
-	session *mgo.Session
+	UserRepo mongoUserRepo
+	RaceRepo raceMongoRepo
 }
 
 // DatasourceFactory creates a Datasource interface
@@ -29,7 +27,7 @@ func createMongoDataSource() Datasource {
 	if err != nil {
 		panic(err)
 	}
-	mur := MongoUserRepo{
+	mur := mongoUserRepo{
 		session: session,
 	}
 	return Datasource{
@@ -37,5 +35,5 @@ func createMongoDataSource() Datasource {
 	}
 }
 
-// DB is the actual data source
+// DB is the data source instance
 var DB = DatasourceFactory("mongodb")

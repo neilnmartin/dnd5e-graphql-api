@@ -1,4 +1,4 @@
-package infrastructure
+package repository
 
 import (
 	"fmt"
@@ -9,9 +9,9 @@ import (
 )
 
 type raceMongo struct {
-	id   bson.ObjectId `json:"id" bson:"_id"`
-	name string        `json:"name" bson:"name"`
-	age  string        `json:"age" bson:"age"`
+	id   bson.ObjectId `bson:"_id"`
+	name string        `bson:"name"`
+	age  string        `bson:"age"`
 
 	// description []bson.String `json:"desc" bson:"desc"`
 	// abilityBonuses AbilityBonus
@@ -37,6 +37,10 @@ func (r raceMongoRepo) GetRaceByID(ri domain.Race) (*domain.Race, error) {
 	i := bson.IsObjectIdHex(ri.ID)
 	if !i {
 		fmt.Println("not a valid hex")
+		return nil, invalidIDError{
+			Code:    "Invalid ID",
+			Message: "Invalid ID for Race",
+		}
 	}
 
 	rm := raceMongo{

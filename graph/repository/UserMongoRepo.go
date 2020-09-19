@@ -1,4 +1,4 @@
-package infrastructure
+package repository
 
 import (
 	"fmt"
@@ -19,12 +19,12 @@ type userMongo struct {
 }
 
 // MongoUserRepo is the mongodb infrastructure implementation of the UserRepo domain interface
-type MongoUserRepo struct {
+type mongoUserRepo struct {
 	session *mgo.Session
 }
 
 // CreateUser will create a domain User in the database
-func (m MongoUserRepo) CreateUser(ui domain.User) domain.User {
+func (m mongoUserRepo) CreateUser(ui domain.User) domain.User {
 
 	u := userMongo{
 		ID:         bson.NewObjectId(),
@@ -50,7 +50,7 @@ func (m MongoUserRepo) CreateUser(ui domain.User) domain.User {
 }
 
 // GetUserByID will receive a domain User and return a domain User with a matching id
-func (m MongoUserRepo) GetUserByID(ui domain.User) domain.User {
+func (m mongoUserRepo) GetUserByID(ui domain.User) domain.User {
 	fmt.Printf("ID %v", ui.ID)
 	fmt.Printf("ID TYPE %T", ui.ID)
 
@@ -81,7 +81,7 @@ func (m MongoUserRepo) GetUserByID(ui domain.User) domain.User {
 }
 
 // GetUserByEmail will accept an email and find a user with a matching email in the database
-func (m MongoUserRepo) GetUserByEmail(e string) domain.User {
+func (m mongoUserRepo) GetUserByEmail(e string) domain.User {
 	fmt.Printf("email %v", e)
 	fmt.Printf("email TYPE %T", e)
 
@@ -104,7 +104,7 @@ func (m MongoUserRepo) GetUserByEmail(e string) domain.User {
 }
 
 // UpdateUser will find and update a database user with the updated values of a domain User
-func (m MongoUserRepo) UpdateUser(ui domain.User) domain.User {
+func (m mongoUserRepo) UpdateUser(ui domain.User) domain.User {
 	i := bson.IsObjectIdHex(ui.ID)
 	if !i {
 		fmt.Println("not a valid hex")
@@ -132,6 +132,6 @@ func (m MongoUserRepo) UpdateUser(ui domain.User) domain.User {
 }
 
 // DeleteUser will delete a user and return a boolean indicating success or failure
-func (m MongoUserRepo) DeleteUser(ui domain.User) bool {
+func (m mongoUserRepo) DeleteUser(ui domain.User) bool {
 	return false
 }
