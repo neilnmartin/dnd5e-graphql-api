@@ -144,10 +144,6 @@ type Character {
 
 type Query {
   user: User
-  character: Character
-  race: Race
-  class: Class
-  spell: Spell
 }
 
 # Mutations

@@ -5,13 +5,9 @@ package graph
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/application"
-	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
-	"github.com/neilnmartin/dnd5e-graphql-api/graph/repository"
-
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/generated"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/model"
 )
@@ -35,31 +31,6 @@ func (r *mutationResolver) LoginUser(ctx context.Context, input model.LoginInput
 }
 
 func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) Character(ctx context.Context) (*model.Character, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) Race(ctx context.Context) (*model.Race, error) {
-	var race domain.Race
-	if input.id != nil {
-		race = repository.DB.GetRaceById(input.id)
-		return race, nil
-	} else if input.name != nil {
-		race = repository.DB.GetRaceByName(input.name)
-		return race, nil
-	} else {
-		return nil, errors.New("Could not find Race")
-	}
-}
-
-func (r *queryResolver) Class(ctx context.Context) (*model.Class, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) Spell(ctx context.Context) (*model.Spell, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
