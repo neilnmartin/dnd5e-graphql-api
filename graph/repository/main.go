@@ -6,7 +6,7 @@ import (
 
 // A Datasource that implements a data repository with CRUD for each resource
 type Datasource struct {
-	UserRepo mongoUserRepo
+	UserRepo userMongoRepo
 	RaceRepo raceMongoRepo
 }
 
@@ -27,11 +27,11 @@ func createMongoDataSource() Datasource {
 	if err != nil {
 		panic(err)
 	}
-	mur := mongoUserRepo{
+	umr := userMongoRepo{
 		session: session,
 	}
 	return Datasource{
-		UserRepo: mur,
+		UserRepo: umr,
 	}
 }
 
