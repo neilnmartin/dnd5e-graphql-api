@@ -28,8 +28,15 @@ type Character struct {
 
 // Race describes the DnD 5E character Race
 type Race struct {
-	ID   string
-	Name string
+	ID              string
+	Name            string
+	Age             int
+	Speed           string
+	Size            string
+	SizeDescription string
+	Alignment       string
+	// SubRaces        []SubRace
+	// Traits          []Traits
 }
 
 // Class describes the character class
@@ -47,4 +54,11 @@ type Equipment struct {
 // UserRepo describes the user repository with User related methods
 type UserRepo interface {
 	CreateUser(u User) User
+	GetUserById(u User) User
+}
+
+// RaceRepo describes the race repository with Race related methods
+type RaceRepo interface {
+	GetRaceById(r Race) Race
+	GetRaceByName(r Race) Race
 }
