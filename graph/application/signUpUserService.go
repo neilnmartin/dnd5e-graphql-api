@@ -19,9 +19,11 @@ type Name struct {
 func SignUpUser(email string, password string, name Name, userRepo domain.UserRepo) domain.User {
 	// check existing user: TODO
 	validEail := regexp.MustCompile(``)
+
 	if !validEail.MatchString(email) {
 		log.Fatal("not a valid email")
 	}
+
 	hpw, err := bcrypt.GenerateFromPassword([]byte(password), 5)
 	if err != nil {
 		log.Printf(err.Error())

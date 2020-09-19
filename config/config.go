@@ -10,7 +10,9 @@ import (
 )
 
 type appConfig struct {
-	Hello string
+	mongoURL      string
+	mongoUser     string
+	mongoPassword string
 }
 
 // Anything test
@@ -18,19 +20,27 @@ var Anything = "anything"
 
 func new() *appConfig {
 	var Config appConfig
-	fmt.Println("config main is running")
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Printf("%v", errors.New("Could not load .env"))
 	}
-	if Hello, exists := os.LookupEnv("MONGO_URL"); exists {
-		fmt.Println("config load env hello", Hello)
-		Config = appConfig{
-			Hello,
-		}
-		return &Config
+
+	Config = appConfig{
+		mongoURL:      *getEnv("MONGO_URL"),
+		mongoUser:     *getEnv("MONGO_USER"),
+		mongoPassword: *getEnv("MONGO_PASSWORD"),
 	}
-	fmt.Println("could not find hello")
+
+	return &Config
+}
+
+func getEnv(varName string) *string {
+	if varVal, exists := os.LookupEnv("MONGO_URL"); exists {
+		fmt.Printf("Loaded env variable %v: %v", varName, varVal)
+		return &varVal
+	}
+	log.Panicf("Could not find env variable: %v", varName)
 	return nil
 }
 
