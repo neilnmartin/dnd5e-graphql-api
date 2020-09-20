@@ -7,12 +7,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/neilnmartin/dnd5e-graphql-api/graph/repository"
-
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/application"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/generated"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/model"
+	"github.com/neilnmartin/dnd5e-graphql-api/graph/repository"
 )
 
 func (r *mutationResolver) SignUpUser(ctx context.Context, input model.UserInput) (*model.User, error) {

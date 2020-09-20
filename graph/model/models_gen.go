@@ -93,6 +93,9 @@ type Race struct {
 	Perks                      *string       `json:"perks"`
 	SubRaces                   []*SubRace    `json:"subRaces"`
 	Age                        *string       `json:"age"`
+	Speed                      *int          `json:"speed"`
+	Size                       *string       `json:"size"`
+	SizeDescription            *string       `json:"sizeDescription"`
 	StartingProficiencies      []*string     `json:"startingProficiencies"`
 	StartingProficiencyOptions []*string     `json:"startingProficiencyOptions"`
 	Languages                  []*Language   `json:"languages"`

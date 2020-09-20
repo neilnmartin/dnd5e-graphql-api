@@ -134,6 +134,9 @@ type ComplexityRoot struct {
 		Languages                  func(childComplexity int) int
 		Name                       func(childComplexity int) int
 		Perks                      func(childComplexity int) int
+		Size                       func(childComplexity int) int
+		SizeDescription            func(childComplexity int) int
+		Speed                      func(childComplexity int) int
 		StartingProficiencies      func(childComplexity int) int
 		StartingProficiencyOptions func(childComplexity int) int
 		SubRaces                   func(childComplexity int) int
@@ -610,6 +613,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Race.Perks(childComplexity), true
 
+	case "Race.size":
+		if e.complexity.Race.Size == nil {
+			break
+		}
+
+		return e.complexity.Race.Size(childComplexity), true
+
+	case "Race.sizeDescription":
+		if e.complexity.Race.SizeDescription == nil {
+			break
+		}
+
+		return e.complexity.Race.SizeDescription(childComplexity), true
+
+	case "Race.speed":
+		if e.complexity.Race.Speed == nil {
+			break
+		}
+
+		return e.complexity.Race.Speed(childComplexity), true
+
 	case "Race.startingProficiencies":
 		if e.complexity.Race.StartingProficiencies == nil {
 			break
@@ -946,6 +970,9 @@ type Race {
   perks: String
   subRaces: [SubRace!]
   age: String
+  speed: Int
+  size: String
+  sizeDescription: String
   startingProficiencies: [String]
   startingProficiencyOptions: [String]
   languages: [Language]
@@ -2934,6 +2961,99 @@ func (ec *executionContext) _Race_age(ctx context.Context, field graphql.Collect
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Age, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Race_speed(ctx context.Context, field graphql.CollectedField, obj *model.Race) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Race",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Speed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Race_size(ctx context.Context, field graphql.CollectedField, obj *model.Race) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Race",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Size, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Race_sizeDescription(ctx context.Context, field graphql.CollectedField, obj *model.Race) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Race",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SizeDescription, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5692,6 +5812,12 @@ func (ec *executionContext) _Race(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._Race_subRaces(ctx, field, obj)
 		case "age":
 			out.Values[i] = ec._Race_age(ctx, field, obj)
+		case "speed":
+			out.Values[i] = ec._Race_speed(ctx, field, obj)
+		case "size":
+			out.Values[i] = ec._Race_size(ctx, field, obj)
+		case "sizeDescription":
+			out.Values[i] = ec._Race_sizeDescription(ctx, field, obj)
 		case "startingProficiencies":
 			out.Values[i] = ec._Race_startingProficiencies(ctx, field, obj)
 		case "startingProficiencyOptions":
