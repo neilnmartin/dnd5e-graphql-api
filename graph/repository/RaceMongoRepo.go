@@ -22,7 +22,7 @@ type raceMongo struct {
 	name            string        `bson:"name"`
 	speed           int           `bson:"speed"`
 	age             string        `bson:"age"`
-	size            string        `bson:"size"` // medium etc.
+	size            string        `bson:"size"` // Medium etc.
 	alignment       string        `bson:"alignment"`
 	sizeDescription string        `bson:"size_description"`
 	subRaces        []subRace     `bson:"subraces"`
@@ -74,18 +74,24 @@ func (r raceMongoRepo) GetRaceByID(ri domain.Race) (*domain.Race, error) {
 }
 
 // GetRaceByName receives a domain Race and gets a database race matching its name
-func (r raceMongoRepo) GetRaceByName(ri domain.Race) (*domain.Race, error) {
+func (r raceMongoRepo) GetRaceByName(name string) (*domain.Race, error) {
 	rm := raceMongo{
-		id: bson.ObjectIdHex(ri.ID),
+		name: name,
 	}
 
-	err := r.session.DB("dnd5e").C("races").Find(rm.id).One(&rm)
+	err := r.session.DB("dnd5e").C("races").With(r.session.Copy()).Find(bson.M{"name": name}).One(&rm)
 	if err != nil {
 		return nil, err
 	}
 
 	dr := domain.Race{
-		ID: rm.id.Hex(),
+		ID:              rm.id.Hex(),
+		Name:            rm.name,
+		Age:             rm.age,
+		Speed:           rm.speed,
+		Size:            rm.size,
+		SizeDescription: rm.sizeDescription,
+		Alignment:       rm.alignment,
 	}
 
 	return &dr, nil

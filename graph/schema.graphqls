@@ -32,6 +32,9 @@ type Race {
   perks: String
   subRaces: [SubRace!]
   age: String
+  speed: Int
+  size: String
+  sizeDescription: String
   startingProficiencies: [String]
   startingProficiencyOptions: [String]
   languages: [Language]
