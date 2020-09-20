@@ -1,7 +1,6 @@
 package application
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
@@ -14,19 +13,25 @@ type LogInResponse struct {
 	token string
 }
 
-// LogInUser logs in a user by comparing password hashes and returning a token
-func LogInUser(email string, password string) LogInResponse {
-	fmt.Println("reached login service")
+// LogInUserService logs in a user by comparing password hashes and returning a token
+func LogInUserService(email string, password string) (*LogInResponse, error) {
+	log.Println("reached login service")
 
-	dbu := db.UserRepo.GetUserByEmail(email)
+	dbu, err := db.UserRepo.GetUserByEmail(email)
+	if err != nil {
+		log.Printf("%v", err)
+		return nil, err
+	}
+
 	hpw := []byte(dbu.Password)
-	err := bcrypt.CompareHashAndPassword(hpw, []byte(password))
+	err = bcrypt.CompareHashAndPassword(hpw, []byte(password))
 	if err != nil {
 		log.Printf("%v", err) // throw error
+		return nil, err
 	}
 
-	return LogInResponse{
-		User:  &dbu,
+	return &LogInResponse{
+		User:  dbu,
 		token: "token",
-	}
+	}, nil
 }

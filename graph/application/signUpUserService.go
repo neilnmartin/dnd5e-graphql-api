@@ -1,6 +1,7 @@
 package application
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"regexp"
@@ -9,19 +10,21 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Name consists of the givenName, familyName
-type Name struct {
-	givenName  string
-	familyName string
-}
-
-// SignUpUser signs up a user by adding to the database after validating name email and password inputs
-func SignUpUser(email string, password string, name Name, userRepo domain.UserRepo) domain.User {
+// SignUpUserService signs up a user by adding to the database after validating name email and password inputs
+func SignUpUserService(email string, password string, name domain.Name, ur domain.UserRepo) (*domain.User, error) {
 	// check existing user: TODO
-	validEail := regexp.MustCompile(``)
+	eu, err := ur.GetUserByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+	if eu != nil {
+		return nil, errors.New("A user with this email already exists")
+	}
 
-	if !validEail.MatchString(email) {
+	validEmail := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+	if !validEmail.MatchString(email) {
 		log.Fatal("not a valid email")
+		return nil, errors.New("Invalid email")
 	}
 
 	hpw, err := bcrypt.GenerateFromPassword([]byte(password), 5)
@@ -34,13 +37,13 @@ func SignUpUser(email string, password string, name Name, userRepo domain.UserRe
 
 	nu := domain.User{
 		Email:    email,
-		Password: string(hpw),
+		Password: shpw,
 		Name: domain.Name{
-			GivenName:  name.givenName,
-			FamilyName: name.familyName,
+			GivenName:  name.GivenName,
+			FamilyName: name.FamilyName,
 		},
 	}
 
-	user := db.UserRepo.CreateUser(nu)
-	return user
+	user, err := ur.CreateUser(nu)
+	return user, nil
 }
