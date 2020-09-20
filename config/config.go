@@ -34,12 +34,11 @@ func createConfig() *AppConfig {
 
 	Config = &AppConfig{
 		MongoConfig: &MongoConfig{
-			MongoURL:          *getEnv("MONGO_URL"),
-			MongoUser:         *getEnv("MONGO_USER"),
-			MongoPassword:     *getEnv("MONGO_PASSWORD"),
 			MongoClusterAddr1: *getEnv("MONGO_CLUSTER_ADDR_1"),
 			MongoClusterAddr2: *getEnv("MONGO_CLUSTER_ADDR_2"),
 			MongoClusterAddr3: *getEnv("MONGO_CLUSTER_ADDR_3"),
+			MongoUser:         *getEnv("MONGO_USER"),
+			MongoPassword:     *getEnv("MONGO_PASSWORD"),
 		},
 	}
 
