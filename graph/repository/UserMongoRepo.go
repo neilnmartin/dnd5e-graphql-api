@@ -24,6 +24,8 @@ type userMongoRepo struct {
 
 // CreateUser will create a domain User in the database
 func (m userMongoRepo) CreateUser(ui domain.User) (*domain.User, error) {
+	sc := m.session.Copy()
+	defer sc.Close()
 
 	u := userMongo{
 		ID:         bson.NewObjectId(),
@@ -32,8 +34,14 @@ func (m userMongoRepo) CreateUser(ui domain.User) (*domain.User, error) {
 		Password:   ui.Password,
 	}
 
-	m.session.DB("rest-game").C("users").Insert(u)
-	m.session.DB("rest-game").C("users").FindId(u.ID).One(&u)
+	err := sc.DB("rest-game").C("users").Insert(u)
+	if err != nil {
+		return nil, err
+	}
+	err = sc.DB("rest-game").C("users").FindId(u.ID).One(&u)
+	if err != nil {
+		return nil, err
+	}
 
 	// convert to domain user
 	ur := domain.User{
@@ -50,6 +58,9 @@ func (m userMongoRepo) CreateUser(ui domain.User) (*domain.User, error) {
 
 // GetUserByID will receive a domain User and return a domain User with a matching id
 func (m userMongoRepo) GetUserByID(ui domain.User) (*domain.User, error) {
+	sc := m.session.Copy()
+	defer sc.Close()
+
 	fmt.Printf("ID %v", ui.ID)
 	fmt.Printf("ID TYPE %T", ui.ID)
 
@@ -65,7 +76,7 @@ func (m userMongoRepo) GetUserByID(ui domain.User) (*domain.User, error) {
 		Password:   ui.Password,
 	}
 
-	m.session.DB("rest-game").C("users").FindId(u.ID).One(&u)
+	sc.DB("rest-game").C("users").FindId(u.ID).One(&u)
 
 	ur := domain.User{
 		ID: u.ID.Hex(),
@@ -81,6 +92,8 @@ func (m userMongoRepo) GetUserByID(ui domain.User) (*domain.User, error) {
 
 // GetUserByEmail will accept an email and find a user with a matching email in the database
 func (m userMongoRepo) GetUserByEmail(e string) (*domain.User, error) {
+	sc := m.session.Copy()
+	defer sc.Close()
 	fmt.Printf("email %v", e)
 	fmt.Printf("email TYPE %T", e)
 
@@ -88,7 +101,7 @@ func (m userMongoRepo) GetUserByEmail(e string) (*domain.User, error) {
 		Email: e,
 	}
 
-	m.session.DB("dnd5e").C("users").Find(e).One(&u)
+	sc.DB("dnd5e").C("users").Find(e).One(&u)
 
 	ur := domain.User{
 		ID: u.ID.Hex(),
@@ -104,6 +117,9 @@ func (m userMongoRepo) GetUserByEmail(e string) (*domain.User, error) {
 
 // UpdateUser will find and update a database user with the updated values of a domain User
 func (m userMongoRepo) UpdateUser(ui domain.User) (*domain.User, error) {
+	sc := m.session.Copy()
+	defer sc.Close()
+
 	i := bson.IsObjectIdHex(ui.ID)
 	if !i {
 		fmt.Println("not a valid hex")
@@ -116,7 +132,7 @@ func (m userMongoRepo) UpdateUser(ui domain.User) (*domain.User, error) {
 		Password:   ui.Password,
 	}
 
-	m.session.DB("dnd5e").C("users").Update(ui, ui) // TODO
+	sc.DB("dnd5e").C("users").Update(ui, ui) // TODO
 
 	ur := domain.User{
 		ID: u.ID.Hex(),
