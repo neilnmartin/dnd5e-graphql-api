@@ -1,10 +1,12 @@
 -include .env
 
-VERSION:= $(shell git describe --tags)
+# VERSION:= $(shell git describe --tags)
+
+## TODO add dir watch
 
 install: 
 	go get
-generate: 
+gen: 
 	go run github.com/99designs/gqlgen generate
 start: 
 	go run ./server.go
@@ -15,4 +17,4 @@ compile:
 	GOOS=freebsd GOARCH=386 go build -o bin/main-freebsd-386 main.go
 	GOOS=linux GOARCH=arm go build -o bin/main-linux-arm main.go
 	GOOS=linux GOARCH=arm64 go build -o bin/main-linux-arm64 main.go
-all: install generate start
+all: install gen start
