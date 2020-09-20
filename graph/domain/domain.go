@@ -41,8 +41,33 @@ type Race struct {
 
 // Class describes the character class
 type Class struct {
-	ID   string
-	Name string
+	ID                 string
+	Name               string
+	HitDie             int
+	ProficiencyChoices []Skill
+	Proficiencies      []Skill
+	SavingThrows       []Ability
+	StartingEquipment  StartingEquipment
+	ClassLevels        []ClassLevel
+	SubClasses         []SubClass
+	Spellcasting       Ability
+	url                string
+}
+
+//SubClass defines a character subclass
+type SubClass struct {
+}
+
+type ClassLevel struct {
+}
+
+type Skill struct {
+}
+
+type Ability struct {
+}
+
+type StartingEquipment struct {
 }
 
 // Equipment describes a piece or item of equipment
@@ -52,14 +77,3 @@ type Equipment struct {
 }
 
 // UserRepo describes the user repository with User related methods
-type UserRepo interface {
-	CreateUser(u User) (*User, error)
-	GetUserByID(u User) (*User, error)
-	GetUserByEmail(e string) (*User, error)
-}
-
-// RaceRepo describes the race repository with Race related methods
-type RaceRepo interface {
-	GetRaceByID(r Race) (*Race, error)
-	GetRaceByName(r Race) (*Race, error)
-}
