@@ -17,16 +17,17 @@ type trait struct {
 	name string `bson:"name"`
 }
 
-type raceMongo struct {
-	id              bson.ObjectId `bson:"_id"`
-	name            string        `bson:"name"`
-	speed           int           `bson:"speed"`
-	age             string        `bson:"age"`
-	size            string        `bson:"size"` // Medium etc.
-	alignment       string        `bson:"alignment"`
-	sizeDescription string        `bson:"size_description"`
-	subRaces        []subRace     `bson:"subraces"`
-	traits          []trait       `bson:"traits"`
+//RaceMongo is the mongodb type for race documents
+type RaceMongo struct {
+	ID              bson.ObjectId `json:"_id" bson:"_id"`
+	Name            string        `json:"name" bson:"name"`
+	Speed           int           `json:"speed" bson:"speed"`
+	Age             string        `json:"age" bson:"age"`
+	Size            string        `json:"size" bson:"size"` // Medium etc.
+	Alignment       string        `json:"alignment" bson:"alignment"`
+	SizeDescription string        `json:"size_description" bson:"size_description"`
+	SubRaces        []subRace     `json:"subraces" bson:"subraces"`
+	Traits          []trait       `json:"traits" bson:"traits"`
 
 	// description []bson.String `json:"desc" bson:"desc"`
 	// abilityBonuses AbilityBonus
@@ -57,17 +58,17 @@ func (r raceMongoRepo) GetRaceByID(ri domain.Race) (*domain.Race, error) {
 		}
 	}
 
-	rm := raceMongo{
-		id: bson.ObjectIdHex(ri.ID),
+	rm := RaceMongo{
+		ID: bson.ObjectIdHex(ri.ID),
 	}
 
-	err := r.session.DB("dnd5e").C("races").FindId(rm.id).One(&rm)
+	err := r.session.DB("dnd5e").C("races").FindId(rm.ID).One(&rm)
 	if err != nil {
 		return nil, err
 	}
 
 	dr := domain.Race{
-		ID: rm.id.Hex(),
+		ID: rm.ID.Hex(),
 	}
 
 	return &dr, nil
@@ -75,8 +76,8 @@ func (r raceMongoRepo) GetRaceByID(ri domain.Race) (*domain.Race, error) {
 
 // GetRaceByName receives a domain Race and gets a database race matching its name
 func (r raceMongoRepo) GetRaceByName(name string) (*domain.Race, error) {
-	rm := raceMongo{
-		name: name,
+	rm := RaceMongo{
+		Name: name,
 	}
 
 	err := r.session.DB("dnd5e").C("races").With(r.session.Copy()).Find(bson.M{"name": name}).One(&rm)
@@ -85,14 +86,38 @@ func (r raceMongoRepo) GetRaceByName(name string) (*domain.Race, error) {
 	}
 
 	dr := domain.Race{
-		ID:              rm.id.Hex(),
-		Name:            rm.name,
-		Age:             rm.age,
-		Speed:           rm.speed,
-		Size:            rm.size,
-		SizeDescription: rm.sizeDescription,
-		Alignment:       rm.alignment,
+		ID:              rm.ID.Hex(),
+		Name:            rm.Name,
+		Age:             rm.Age,
+		Speed:           rm.Speed,
+		Size:            rm.Size,
+		SizeDescription: rm.SizeDescription,
+		Alignment:       rm.Alignment,
 	}
 
 	return &dr, nil
+}
+
+func (r *raceMongoRepo) GetAllRaces() (*[]*domain.Race, error) {
+	// fetch
+	allRaces := []RaceMongo{}
+	err := r.session.DB("dnd5e").C("races").With(r.session.Copy()).Find(bson.M{}).All(&allRaces)
+	if err != nil {
+		return nil, err
+	}
+	// map
+	domainRaces := []*domain.Race{}
+	for _, ar := range allRaces {
+		fmt.Printf("%+v", ar)
+		domainRaces = append(domainRaces, &domain.Race{
+			ID:              ar.ID.Hex(),
+			Name:            ar.Name,
+			Age:             ar.Age,
+			Speed:           ar.Speed,
+			Size:            ar.Size,
+			SizeDescription: ar.SizeDescription,
+			Alignment:       ar.Alignment,
+		})
+	}
+	return &domainRaces, nil
 }
