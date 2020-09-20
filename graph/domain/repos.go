@@ -11,6 +11,7 @@ type UserRepo interface {
 type RaceRepo interface {
 	GetRaceByID(r Race) (*Race, error)
 	GetRaceByName(r Race) (*Race, error)
+	GetAllRaces() ([]Race, error)
 }
 
 // ClassRepo describes the race repository with Race related methods

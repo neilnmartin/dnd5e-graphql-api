@@ -1,5 +1,7 @@
 package repository
 
+import "github.com/neilnmartin/dnd5e-graphql-api/config"
+
 // A datasource that implements a data repository with CRUD for each resource
 type datasource struct {
 	UserRepo userMongoRepo
@@ -19,4 +21,4 @@ func datasourceFactory(p string) datasource {
 }
 
 // DB is the data source instance
-var DB = datasourceFactory("mongodb")
+var DB = datasourceFactory(config.Config.Persistence)
