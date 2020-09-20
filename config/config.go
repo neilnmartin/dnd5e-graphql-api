@@ -9,40 +9,38 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type appConfig struct {
-	mongoURL      string
-	mongoUser     string
-	mongoPassword string
+//AppConfig is the application configuration schema
+type AppConfig struct {
+	MongoURL      string
+	MongoUser     string
+	MongoPassword string
 }
 
-// Anything test
-var Anything = "anything"
-
-func new() *appConfig {
-	var Config appConfig
+func createConfig() *AppConfig {
+	var Config AppConfig
 
 	err := godotenv.Load()
 	if err != nil {
 		log.Printf("%v", errors.New("Could not load .env"))
 	}
 
-	Config = appConfig{
-		mongoURL:      *getEnv("MONGO_URL"),
-		mongoUser:     *getEnv("MONGO_USER"),
-		mongoPassword: *getEnv("MONGO_PASSWORD"),
+	Config = AppConfig{
+		MongoURL:      *getEnv("MONGO_URL"),
+		MongoUser:     *getEnv("MONGO_USER"),
+		MongoPassword: *getEnv("MONGO_PASSWORD"),
 	}
 
 	return &Config
 }
 
 func getEnv(varName string) *string {
-	if varVal, exists := os.LookupEnv("MONGO_URL"); exists {
-		fmt.Printf("Loaded env variable %v: %v", varName, varVal)
+	if varVal, exists := os.LookupEnv(varName); exists {
+		fmt.Printf("\nLoaded env variable %v: %v", varName, varVal)
 		return &varVal
 	}
-	log.Panicf("Could not find env variable: %v", varName)
+	log.Panicf("\nCould not find env variable: %v", varName)
 	return nil
 }
 
-// Config holds the application config variables
-var Config = new()
+// Config instance of AppConfig
+var Config = createConfig()
