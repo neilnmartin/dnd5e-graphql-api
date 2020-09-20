@@ -56,6 +56,27 @@ func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *queryResolver) Races(ctx context.Context) ([]*model.Race, error) {
+	ar, err := repository.DB.RaceRepo.GetAllRaces()
+	if err != nil {
+		return nil, err
+	}
+	rm := []*model.Race{}
+	for _, dr := range *ar {
+		fmt.Printf("\n%v %v", dr.Name, dr.Size)
+		rm = append(rm, &model.Race{
+			ID:                  dr.ID,
+			Name:                dr.Name,
+			Age:                 &dr.Age,
+			Size:                &dr.Size,
+			SizeDescription:     &dr.SizeDescription,
+			Speed:               &dr.Speed,
+			LanguageDescription: &dr.LanguageDescription,
+		})
+	}
+	return rm, nil
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 

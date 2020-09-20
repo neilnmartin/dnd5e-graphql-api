@@ -145,10 +145,6 @@ type Character {
   equipment: [Equipment]
 }
 
-type Query {
-  user: User
-}
-
 # Mutations
 input UserInput {
   name: NameInput!
@@ -169,6 +165,11 @@ type LoginResponse {
 input NameInput {
   givenName: String!
   familyName: String!
+}
+
+type Query {
+  user: User
+  races: [Race!]
 }
 
 type Mutation {
