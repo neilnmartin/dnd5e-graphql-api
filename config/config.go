@@ -11,6 +11,7 @@ import (
 
 //AppConfig is the application configuration schema
 type AppConfig struct {
+	Persistence string
 	MongoConfig *MongoConfig
 }
 
@@ -33,6 +34,7 @@ func createConfig() *AppConfig {
 	}
 
 	Config = &AppConfig{
+		Persistence: *getEnv("PERSISTENCE"),
 		MongoConfig: &MongoConfig{
 			MongoClusterAddr1: *getEnv("MONGO_CLUSTER_ADDR_1"),
 			MongoClusterAddr2: *getEnv("MONGO_CLUSTER_ADDR_2"),
