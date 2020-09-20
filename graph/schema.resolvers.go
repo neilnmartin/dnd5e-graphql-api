@@ -7,24 +7,47 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/neilnmartin/dnd5e-graphql-api/graph/repository"
+
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/application"
+	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/generated"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/model"
 )
 
 func (r *mutationResolver) SignUpUser(ctx context.Context, input model.UserInput) (*model.User, error) {
-	sampleUser := model.User{
-		ID:    "sampleid",
-		Email: "sampleemail@email.com",
+	ur := repository.DB.UserRepo
+	dn := domain.Name{
+		GivenName:  input.Name.GivenName,
+		FamilyName: input.Name.FamilyName,
 	}
-	return &sampleUser, nil
+	u, err := application.SignUpUserService(input.Email, input.Password, dn, ur)
+	if err != nil {
+		return nil, err
+	}
+	// convert from domain to api model
+	mu := &model.User{
+		Email: u.Email,
+		Name: &model.Name{
+			GivenName:  u.GivenName,
+			FamilyName: u.FamilyName,
+		},
+	}
+	return mu, nil
 }
 
 func (r *mutationResolver) LoginUser(ctx context.Context, input model.LoginInput) (*model.LoginResponse, error) {
-	l := application.LogInUser(input.Email, input.Password)
+	lu, err := application.LogInUserService(input.Email, input.Password)
+	if err != nil {
+		return nil, err
+	}
 	return &model.LoginResponse{
 		User: &model.User{
-			Email: l.User.Email,
+			Email: lu.User.Email,
+			Name: &model.Name{
+				GivenName:  lu.User.GivenName,
+				FamilyName: lu.User.FamilyName,
+			},
 		},
 		// Token: l.Token,
 	}, nil
