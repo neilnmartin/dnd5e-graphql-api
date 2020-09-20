@@ -1,6 +1,10 @@
 package repository
 
 import (
+	"crypto/tls"
+	"net"
+
+	"github.com/neilnmartin/dnd5e-graphql-api/config"
 	"gopkg.in/mgo.v2"
 )
 
@@ -10,22 +14,20 @@ type Datasource struct {
 	RaceRepo raceMongoRepo
 }
 
-// DatasourceFactory creates a Datasource based on a string input p
-// p will identify the persistence infrastructure used
-// eg. in this case "mongodb"
+// DatasourceFactory creates a Datasource based on a string input p.
+// p will identify the db or other persistence infrastructure used.
 func DatasourceFactory(p string) Datasource {
+	// only one implementation so far, default to mongo
 	switch p {
-	// only one implementation so far
 	case "mongodb":
 		return createMongoDataSource()
-	// default to mongo
 	default:
 		return createMongoDataSource()
 	}
 }
 
 func createMongoDataSource() Datasource {
-	session, err := mgo.Dial("")
+	session, err := createMongoConnection()
 	if err != nil {
 		panic(err)
 	}
@@ -39,6 +41,24 @@ func createMongoDataSource() Datasource {
 		UserRepo: umr,
 		RaceRepo: rmr,
 	}
+}
+
+func createMongoConnection() (*mgo.Session, error) {
+	di := mgo.DialInfo{
+		Addrs: []string{
+			config.Config.MongoConfig.MongoClusterAddr1,
+			config.Config.MongoConfig.MongoClusterAddr2,
+			config.Config.MongoConfig.MongoClusterAddr3,
+		},
+		Username: config.Config.MongoConfig.MongoUser,
+		Password: config.Config.MongoConfig.MongoPassword,
+	}
+	// atlas rejects unsecured connections
+	di.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
+		conn, err := tls.Dial("tcp", addr.String(), &tls.Config{})
+		return conn, err
+	}
+	return mgo.DialWithInfo(&di)
 }
 
 // DB is the data source instance
