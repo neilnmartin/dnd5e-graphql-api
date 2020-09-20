@@ -53,12 +53,13 @@ type Equipment struct {
 
 // UserRepo describes the user repository with User related methods
 type UserRepo interface {
-	CreateUser(u User) User
-	GetUserById(u User) User
+	CreateUser(u User) (*User, error)
+	GetUserByID(u User) (*User, error)
+	GetUserByEmail(e string) (*User, error)
 }
 
 // RaceRepo describes the race repository with Race related methods
 type RaceRepo interface {
-	GetRaceById(r Race) Race
-	GetRaceByName(r Race) Race
+	GetRaceByID(r Race) (*Race, error)
+	GetRaceByName(r Race) (*Race, error)
 }
