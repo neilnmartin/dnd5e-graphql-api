@@ -1,11 +1,14 @@
 package repository
 
-import "github.com/neilnmartin/dnd5e-graphql-api/config"
+import (
+	"github.com/neilnmartin/dnd5e-graphql-api/config"
+	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
+)
 
 // A datasource that implements a data repository with CRUD for each resource
 type datasource struct {
-	UserRepo userMongoRepo
-	RaceRepo raceMongoRepo
+	UserRepo domain.UserRepo
+	RaceRepo domain.RaceRepo
 }
 
 // datasourceFactory creates a datasource based on a string input p.

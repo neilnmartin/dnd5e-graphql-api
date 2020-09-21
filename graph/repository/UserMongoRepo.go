@@ -10,7 +10,8 @@ import (
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
 )
 
-type userMongo struct {
+//UserMongo is the mongodb type for a user document
+type UserMongo struct {
 	ID         bson.ObjectId `json:"id" bson:"_id"`
 	Email      string        `json:"email" bson:"email"`
 	GivenName  string        `json:"givenName" bson:"givenName"`
@@ -27,7 +28,7 @@ func (m userMongoRepo) CreateUser(ui domain.User) (*domain.User, error) {
 	sc := m.session.Copy()
 	defer sc.Close()
 
-	u := userMongo{
+	u := UserMongo{
 		ID:         bson.NewObjectId(),
 		GivenName:  ui.Name.GivenName,
 		FamilyName: ui.Name.FamilyName,
@@ -69,7 +70,7 @@ func (m userMongoRepo) GetUserByID(ui domain.User) (*domain.User, error) {
 		fmt.Println("not a valid hex")
 	}
 
-	u := userMongo{
+	u := UserMongo{
 		ID:         bson.ObjectIdHex(ui.ID),
 		GivenName:  ui.GivenName,
 		FamilyName: ui.FamilyName,
@@ -97,7 +98,7 @@ func (m userMongoRepo) GetUserByEmail(e string) (*domain.User, error) {
 	fmt.Printf("email %v", e)
 	fmt.Printf("email TYPE %T", e)
 
-	u := userMongo{
+	u := UserMongo{
 		Email: e,
 	}
 
@@ -125,7 +126,7 @@ func (m userMongoRepo) UpdateUser(ui domain.User) (*domain.User, error) {
 		fmt.Println("not a valid hex")
 	}
 
-	u := userMongo{
+	u := UserMongo{
 		ID:         bson.ObjectIdHex(ui.ID),
 		GivenName:  ui.Name.GivenName,
 		FamilyName: ui.Name.FamilyName,
