@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
@@ -44,48 +45,8 @@ type raceMongoRepo struct {
 	session *mgo.Session
 }
 
-// GetRaceByID receives a domain Race and gets a database race matching its id
-func (r raceMongoRepo) GetRaceByID(ri domain.Race) (*domain.Race, error) {
-	fmt.Printf("ID %v", ri.ID)
-	fmt.Printf("ID TYPE %T", ri.ID)
-
-	i := bson.IsObjectIdHex(ri.ID)
-	if !i {
-		fmt.Println("not a valid hex")
-		return nil, invalidIDError{
-			Code:    "Invalid ID",
-			Message: "Invalid ID for Race",
-		}
-	}
-
-	rm := RaceMongo{
-		ID: bson.ObjectIdHex(ri.ID),
-	}
-
-	err := r.session.DB("dnd5e").C("races").FindId(rm.ID).One(&rm)
-	if err != nil {
-		return nil, err
-	}
-
-	dr := domain.Race{
-		ID: rm.ID.Hex(),
-	}
-
-	return &dr, nil
-}
-
-// GetRaceByName receives a domain Race and gets a database race matching its name
-func (r raceMongoRepo) GetRaceByName(name string) (*domain.Race, error) {
-	rm := RaceMongo{
-		Name: name,
-	}
-
-	err := r.session.DB("dnd5e").C("races").With(r.session.Copy()).Find(bson.M{"name": name}).One(&rm)
-	if err != nil {
-		return nil, err
-	}
-
-	dr := domain.Race{
+func mapRaceToDomain(rm *RaceMongo) *domain.Race {
+	return &domain.Race{
 		ID:              rm.ID.Hex(),
 		Name:            rm.Name,
 		Age:             rm.Age,
@@ -94,11 +55,39 @@ func (r raceMongoRepo) GetRaceByName(name string) (*domain.Race, error) {
 		SizeDescription: rm.SizeDescription,
 		Alignment:       rm.Alignment,
 	}
-
-	return &dr, nil
 }
 
-func (r *raceMongoRepo) GetAllRaces() (*[]*domain.Race, error) {
+// GetRaceByID receives a domain Race and gets a database race matching its id
+func (r raceMongoRepo) GetRaceByID(id string) (*domain.Race, error) {
+	fmt.Printf("ID %v", id)
+	i := bson.IsObjectIdHex(id)
+	if !i {
+		fmt.Println("not a valid hex")
+		return nil, errors.New("Not a valid id")
+	}
+	rm := RaceMongo{
+		ID: bson.ObjectIdHex(id),
+	}
+	err := r.session.DB("dnd5e").C("races").FindId(rm.ID).One(&rm)
+	if err != nil {
+		return nil, err
+	}
+	return mapRaceToDomain(&rm), nil
+}
+
+// GetRaceByName receives a domain Race and gets a database race matching its name
+func (r raceMongoRepo) GetRaceByName(name string) (*domain.Race, error) {
+	rm := RaceMongo{
+		Name: name,
+	}
+	err := r.session.DB("dnd5e").C("races").With(r.session.Copy()).Find(bson.M{"name": name}).One(&rm)
+	if err != nil {
+		return nil, err
+	}
+	return mapRaceToDomain(&rm), nil
+}
+
+func (r raceMongoRepo) GetAllRaces() (*[]*domain.Race, error) {
 	// fetch
 	allRaces := []RaceMongo{}
 	err := r.session.DB("dnd5e").C("races").With(r.session.Copy()).Find(bson.M{}).All(&allRaces)
@@ -109,15 +98,7 @@ func (r *raceMongoRepo) GetAllRaces() (*[]*domain.Race, error) {
 	domainRaces := []*domain.Race{}
 	for _, ar := range allRaces {
 		fmt.Printf("%+v", ar)
-		domainRaces = append(domainRaces, &domain.Race{
-			ID:              ar.ID.Hex(),
-			Name:            ar.Name,
-			Age:             ar.Age,
-			Speed:           ar.Speed,
-			Size:            ar.Size,
-			SizeDescription: ar.SizeDescription,
-			Alignment:       ar.Alignment,
-		})
+		domainRaces = append(domainRaces, mapRaceToDomain(&ar))
 	}
 	return &domainRaces, nil
 }
