@@ -32,8 +32,8 @@ type Class struct {
 	ID                 *string            `json:"id"`
 	Name               *string            `json:"name"`
 	HitDie             *int               `json:"hitDie"`
-	ProficiencyChoices []*Skill           `json:"proficiencyChoices"`
-	Proficiencies      []*Skill           `json:"proficiencies"`
+	ProficiencyChoices *ProficiencyChoice `json:"proficiencyChoices"`
+	Proficiencies      []*Proficiency     `json:"proficiencies"`
 	SavingThrows       []*Ability         `json:"savingThrows"`
 	StartingEquipment  *StartingEquipment `json:"startingEquipment"`
 	ClassLevels        []*ClassLevel      `json:"classLevels"`
@@ -91,9 +91,19 @@ type NameInput struct {
 	FamilyName string `json:"familyName"`
 }
 
+type Proficiency struct {
+	Name *string `json:"name"`
+}
+
+type ProficiencyChoice struct {
+	Choose *int           `json:"choose"`
+	Type   *string        `json:"type"`
+	From   []*Proficiency `json:"from"`
+}
+
 type Race struct {
-	ID                         string        `json:"id"`
-	Name                       string        `json:"name"`
+	ID                         *string       `json:"id"`
+	Name                       *string       `json:"name"`
 	Description                []*string     `json:"description"`
 	AbilityBonuses             *AbilityBonus `json:"abilityBonuses"`
 	Perks                      *string       `json:"perks"`

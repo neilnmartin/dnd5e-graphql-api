@@ -35,8 +35,8 @@ func (r *Resolver) Race(ctx context.Context, input RaceInput) (*model.Race, erro
 		return nil, err
 	}
 	return &model.Race{
-		ID:                  race.ID,
-		Name:                race.Name,
+		ID:                  &race.ID,
+		Name:                &race.Name,
 		Age:                 &race.Age,
 		Size:                &race.Size,
 		SizeDescription:     &race.SizeDescription,

@@ -6,6 +6,7 @@ package graph
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/application"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
@@ -69,8 +70,8 @@ func (r *queryResolver) Races(ctx context.Context) ([]*model.Race, error) {
 	for _, dr := range *ar {
 		fmt.Printf("\n%v %v", dr.Name, dr.Size)
 		rm = append(rm, &model.Race{
-			ID:                  dr.ID,
-			Name:                dr.Name,
+			ID:                  &dr.ID,
+			Name:                &dr.Name,
 			Age:                 &dr.Age,
 			Size:                &dr.Size,
 			SizeDescription:     &dr.SizeDescription,
@@ -82,7 +83,22 @@ func (r *queryResolver) Races(ctx context.Context) ([]*model.Race, error) {
 }
 
 func (r *queryResolver) Classes(ctx context.Context) ([]*model.Class, error) {
-	panic(fmt.Errorf("not implemented"))
+	log.Println("hit classes query resolver")
+	ac, err := repository.DB.ClassRepo.GetAllClasses()
+	if err != nil {
+		return nil, err
+	}
+	mc := []*model.Class{}
+	for _, dc := range *ac {
+		log.Printf("%v", dc)
+		fmt.Printf("\n%v", dc.Name)
+		mc = append(mc, &model.Class{
+			ID:     &dc.ID,
+			Name:   &dc.Name,
+			HitDie: &dc.HitDie,
+		})
+	}
+	return mc, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
