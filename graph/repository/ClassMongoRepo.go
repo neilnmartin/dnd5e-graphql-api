@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
 	"gopkg.in/mgo.v2"
@@ -16,12 +17,12 @@ type SubClassMongo struct {
 
 //ProficiencyChoiceMongo describe the number and choices for Class skill proficiencies
 type ProficiencyChoiceMongo struct {
-	Choose int          `json:"choose" bson:"choose"`
-	Type   string       `json:"type" bson:"type"`
-	From   []SkillMongo `json:"from" bson:"from"`
+	Choose int                `json:"choose" bson:"choose"`
+	Type   string             `json:"type" bson:"type"`
+	From   []ProficiencyMongo `json:"from" bson:"from"`
 }
 
-//ProficiencyMongo describes a base Class skill
+//ProficiencyMongo describes a base Class proficiency
 type ProficiencyMongo struct {
 	Name string `json:"name" bson:"name"`
 }
@@ -35,9 +36,10 @@ type SkillMongo struct {
 type ClassMongo struct {
 	ID                 bson.ObjectId            `json:"_id" bson:"_id"`
 	Name               string                   `json:"name" bson:"name"`
-	Size               string                   `json:"size" bson:"size"` // Medium etc.
+	HitDie             int                      `json:"hit_die" bson:"hit_die"`
 	ProficiencyChoices []ProficiencyChoiceMongo `json:"proficiency_choices" bson:"proficiency_choices"`
 	SubClasses         []SubClassMongo          `json:"subclasses" bson:"subclasses"`
+	Proficiencies      []ProficiencyMongo       `json:"proficiencies" bson:"proficiencies"`
 }
 
 type classMongoRepo struct {
@@ -45,13 +47,39 @@ type classMongoRepo struct {
 }
 
 func mapClassToDomain(cm *ClassMongo) *domain.Class {
+	dsc := []domain.SubClass{}
+	for _, sc := range cm.SubClasses {
+		dsc = append(dsc, domain.SubClass{
+			Name: sc.Name,
+		})
+	}
+	dp := []domain.Proficiency{}
+	for _, p := range cm.Proficiencies {
+		dp = append(dp, domain.Proficiency{
+			Name: p.Name,
+		})
+	}
+	dpc := []domain.ProficiencyChoice{}
+	for _, pc := range cm.ProficiencyChoices {
+		pcf := []domain.Proficiency{}
+		for _, fp := range pc.From {
+			pcf = append(pcf, domain.Proficiency{
+				Name: fp.Name,
+			})
+		}
+		dpc = append(dpc, domain.ProficiencyChoice{
+			Choose: pc.Choose,
+			Type:   pc.Type,
+			From:   pcf,
+		})
+	}
 	return &domain.Class{
-		ID:   cm.ID.Hex(),
-		Name: cm.Name,
-		// ProficiencyChoices: &cm.ProficiencyChoices,
-		// SubClasses: &domain.Class{
-		// 	Name: cm.SubClasses.Name,
-		// },
+		ID:                 cm.ID.Hex(),
+		Name:               cm.Name,
+		HitDie:             cm.HitDie,
+		ProficiencyChoices: dpc,
+		Proficiencies:      dp,
+		SubClasses:         dsc,
 	}
 }
 
@@ -85,10 +113,11 @@ func (r classMongoRepo) GetClassByName(name string) (*domain.Class, error) {
 	return mapClassToDomain(&rm), nil
 }
 
-func (r classMongoRepo) GetAllClasss() (*[]*domain.Class, error) {
+func (r classMongoRepo) GetAllClasses() (*[]*domain.Class, error) {
+	log.Println("hit mongo repo get all classes")
 	// fetch
 	allClasses := []ClassMongo{}
-	err := r.session.DB("dnd5e").C("Classs").With(r.session.Copy()).Find(bson.M{}).All(&allClasses)
+	err := r.session.DB("dnd5e").C("classes").With(r.session.Copy()).Find(bson.M{}).All(&allClasses)
 	if err != nil {
 		return nil, err
 	}
