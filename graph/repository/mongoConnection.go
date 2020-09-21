@@ -35,7 +35,7 @@ func createMongoConnection() (*mgo.Session, error) {
 		Username: config.Config.MongoConfig.MongoUser,
 		Password: config.Config.MongoConfig.MongoPassword,
 	}
-	// atlas rejects unsecured connections
+	// mongo atlas rejects unsecured connections
 	di.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
 		conn, err := tls.Dial("tcp", addr.String(), &tls.Config{})
 		return conn, err

@@ -9,26 +9,26 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-type subRace struct {
+type SubRaceMongo struct {
 	url  string `bson:"url"`
 	name string `bson:"name"`
 }
-type trait struct {
+type TraitMongo struct {
 	url  string `bson:"url"`
 	name string `bson:"name"`
 }
 
 //RaceMongo is the mongodb type for race documents
 type RaceMongo struct {
-	ID              bson.ObjectId `json:"_id" bson:"_id"`
-	Name            string        `json:"name" bson:"name"`
-	Speed           int           `json:"speed" bson:"speed"`
-	Age             string        `json:"age" bson:"age"`
-	Size            string        `json:"size" bson:"size"` // Medium etc.
-	Alignment       string        `json:"alignment" bson:"alignment"`
-	SizeDescription string        `json:"size_description" bson:"size_description"`
-	SubRaces        []subRace     `json:"subraces" bson:"subraces"`
-	Traits          []trait       `json:"traits" bson:"traits"`
+	ID              bson.ObjectId  `json:"_id" bson:"_id"`
+	Name            string         `json:"name" bson:"name"`
+	Speed           int            `json:"speed" bson:"speed"`
+	Age             string         `json:"age" bson:"age"`
+	Size            string         `json:"size" bson:"size"` // Medium etc.
+	Alignment       string         `json:"alignment" bson:"alignment"`
+	SizeDescription string         `json:"size_description" bson:"size_description"`
+	SubRaces        []SubRaceMongo `json:"subraces" bson:"subraces"`
+	Traits          []TraitMongo   `json:"traits" bson:"traits"`
 
 	// description []bson.String `json:"desc" bson:"desc"`
 	// abilityBonuses AbilityBonus

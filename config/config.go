@@ -26,28 +26,27 @@ type MongoConfig struct {
 }
 
 func createConfig() *AppConfig {
-	var Config *AppConfig
 
 	err := godotenv.Load()
 	if err != nil {
 		log.Printf("%v", errors.New("Could not load .env"))
 	}
 
-	Config = &AppConfig{
-		Persistence: *getEnv("PERSISTENCE"),
+	config := &AppConfig{
+		Persistence: *getVar("PERSISTENCE"),
 		MongoConfig: &MongoConfig{
-			MongoClusterAddr1: *getEnv("MONGO_CLUSTER_ADDR_1"),
-			MongoClusterAddr2: *getEnv("MONGO_CLUSTER_ADDR_2"),
-			MongoClusterAddr3: *getEnv("MONGO_CLUSTER_ADDR_3"),
-			MongoUser:         *getEnv("MONGO_USER"),
-			MongoPassword:     *getEnv("MONGO_PASSWORD"),
+			MongoClusterAddr1: *getVar("MONGO_CLUSTER_ADDR_1"),
+			MongoClusterAddr2: *getVar("MONGO_CLUSTER_ADDR_2"),
+			MongoClusterAddr3: *getVar("MONGO_CLUSTER_ADDR_3"),
+			MongoUser:         *getVar("MONGO_USER"),
+			MongoPassword:     *getVar("MONGO_PASSWORD"),
 		},
 	}
 
-	return Config
+	return config
 }
 
-func getEnv(varName string) *string {
+func getVar(varName string) *string {
 	if varVal, exists := os.LookupEnv(varName); exists {
 		fmt.Printf("\nLoaded env variable %v: %v", varName, varVal)
 		return &varVal
