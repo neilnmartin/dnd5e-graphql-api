@@ -1,0 +1,33 @@
+type SubRace {
+  id: ID!
+  race: Race!
+  name: String!
+}
+
+type Trait {
+  id: ID
+  races: [Race]
+  subRaces: [SubRace]
+  name: String
+  description: [String]
+}
+
+type Race {
+  id: ID!
+  name: String!
+  description: [String]
+  abilityBonuses: AbilityBonus
+  perks: String
+  subRaces: [SubRace!]
+  age: String
+  speed: Int
+  size: String
+  sizeDescription: String
+  startingProficiencies: [String]
+  startingProficiencyOptions: [String]
+  languages: [Language]
+  languageOptions: [Language]
+  languageDescription: String
+  traits: [Trait]
+  traitOptions: [Trait]
+}
