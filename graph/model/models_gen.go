@@ -48,6 +48,12 @@ type ClassLevel struct {
 	Features []*Feature `json:"features"`
 }
 
+type CreateCharacterInput struct {
+	Name  *string `json:"name"`
+	Race  *string `json:"race"`
+	Class *string `json:"class"`
+}
+
 type Equipment struct {
 	Name     *string `json:"name"`
 	Category *string `json:"category"`

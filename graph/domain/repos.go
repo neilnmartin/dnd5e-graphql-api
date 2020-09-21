@@ -9,8 +9,8 @@ type UserRepo interface {
 
 // RaceRepo describes the race repository with Race related methods
 type RaceRepo interface {
-	GetRaceByID(r Race) (*Race, error)
-	GetRaceByName(r Race) (*Race, error)
+	GetRaceByID(id string) (*Race, error)
+	GetRaceByName(name string) (*Race, error)
 	GetAllRaces() (*[]*Race, error)
 }
 
@@ -18,4 +18,5 @@ type RaceRepo interface {
 type ClassRepo interface {
 	GetClassByID(r Class) (*Class, error)
 	GetClassByName(r Class) (*Class, error)
+	GetAllClasses() (*[]*Class, error)
 }
