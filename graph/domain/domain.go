@@ -1,6 +1,6 @@
 package domain
 
-// This is where the actual domain types will be defined (as opposed to the types exposed on the schema)
+// Domain package holds api and persistence-layer agnostic domain type definitions
 
 // User describes the user of the application
 type User struct {
@@ -22,59 +22,14 @@ type Character struct {
 	Name string // character name
 	Race
 	Class
-	level      int8 // small int max 128
+	Level      int8 // small int max 128
 	Equipments []Equipment
 }
 
-// Race describes the DnD 5E character Race
-type Race struct {
-	ID                  string
-	Name                string
-	Age                 string
-	Speed               int
-	Size                string
-	SizeDescription     string
-	Alignment           string
-	LanguageDescription string
-	// SubRaces        []SubRace
-	// Traits          []Traits
-}
-
-// Class describes the character class
-type Class struct {
-	ID                 string
-	Name               string
-	HitDie             int
-	ProficiencyChoices []Skill
-	Proficiencies      []Skill
-	SavingThrows       []Ability
-	StartingEquipment  StartingEquipment
-	ClassLevels        []ClassLevel
-	SubClasses         []SubClass
-	Spellcasting       Ability
-	url                string
-}
-
-//SubClass defines a character subclass
-type SubClass struct {
-}
-
-type ClassLevel struct {
-}
-
+//Skill describes a character's ability-based skill
 type Skill struct {
 }
 
+//Ability describes the base character abilities and associated scores
 type Ability struct {
 }
-
-type StartingEquipment struct {
-}
-
-// Equipment describes a piece or item of equipment
-type Equipment struct {
-	ID   string
-	Name string
-}
-
-// UserRepo describes the user repository with User related methods
