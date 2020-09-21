@@ -15,13 +15,6 @@ type Language {
   name: String!
 }
 
-
-type SubClass {
-  id: ID
-  name: String
-  class: String
-}
-
 type Ability {
   id: ID
   # score?
@@ -38,27 +31,6 @@ type AbilityBonus {
 type Skill {
   id: ID
   name: String
-}
-
-
-type Class {
-  id: ID
-  name: String
-  hitDie: Int
-  proficiencyChoices: [Skill]
-  proficiencies:[Skill]
-  savingThrows: [Ability]
-  startingEquipment: StartingEquipment
-  classLevels: [ClassLevel]
-  subClasses: [SubClass]
-  spellcasting: Ability
-  url: String
-}
-
-type ClassLevel {
-  level: Int
-  class: Class
-  features: [Feature]
 }
 
 type Feature {

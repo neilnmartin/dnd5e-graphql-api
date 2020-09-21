@@ -1,20 +1,6 @@
-type SubRace {
-  id: ID!
-  race: Race!
-  name: String!
-}
-
-type Trait {
-  id: ID
-  races: [Race]
-  subRaces: [SubRace]
-  name: String
-  description: [String]
-}
-
 type Race {
-  id: ID!
-  name: String!
+  id: ID
+  name: String
   description: [String]
   abilityBonuses: AbilityBonus
   perks: String
@@ -30,4 +16,18 @@ type Race {
   languageDescription: String
   traits: [Trait]
   traitOptions: [Trait]
+}
+
+type SubRace {
+  id: ID!
+  race: Race!
+  name: String!
+}
+
+type Trait {
+  id: ID
+  races: [Race]
+  subRaces: [SubRace]
+  name: String
+  description: [String]
 }

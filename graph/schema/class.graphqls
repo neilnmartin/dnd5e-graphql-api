@@ -1,0 +1,35 @@
+type Class {
+  id: ID
+  name: String
+  hitDie: Int
+  proficiencyChoices: ProficiencyChoice
+  proficiencies:[Proficiency]
+  savingThrows: [Ability]
+  startingEquipment: StartingEquipment
+  classLevels: [ClassLevel]
+  subClasses: [SubClass]
+  spellcasting: Ability
+  url: String
+}
+
+type SubClass {
+  id: ID
+  name: String
+  class: String
+}
+
+type ClassLevel {
+  level: Int
+  class: Class
+  features: [Feature]
+}
+
+type ProficiencyChoice {
+  choose: Int
+  type: String
+  from: [Proficiency]
+}
+
+type Proficiency {
+  name: String
+}
