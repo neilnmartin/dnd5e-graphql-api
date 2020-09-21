@@ -14,6 +14,10 @@ import (
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/repository"
 )
 
+func (r *mutationResolver) CreateCharacter(ctx context.Context, input model.CreateCharacterInput) (*model.Character, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *mutationResolver) SignUpUser(ctx context.Context, input model.UserInput) (*model.User, error) {
 	ur := repository.DB.UserRepo
 	dn := domain.Name{
@@ -75,6 +79,10 @@ func (r *queryResolver) Races(ctx context.Context) ([]*model.Race, error) {
 		})
 	}
 	return rm, nil
+}
+
+func (r *queryResolver) Classes(ctx context.Context) ([]*model.Class, error) {
+	panic(fmt.Errorf("not implemented"))
 }
 
 // Mutation returns generated.MutationResolver implementation.
