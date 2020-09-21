@@ -16,7 +16,7 @@ type RaceRepo interface {
 
 // ClassRepo describes the race repository with Race related methods
 type ClassRepo interface {
-	GetClassByID(r Class) (*Class, error)
-	GetClassByName(r Class) (*Class, error)
+	GetClassByID(id string) (*Class, error)
+	GetClassByName(name string) (*Class, error)
 	GetAllClasses() (*[]*Class, error)
 }

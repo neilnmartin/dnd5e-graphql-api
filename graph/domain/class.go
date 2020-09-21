@@ -7,8 +7,8 @@ type Class struct {
 	ID                 string
 	Name               string
 	HitDie             int
-	ProficiencyChoices []Skill
-	Proficiencies      []Skill
+	ProficiencyChoices []ProficiencyChoice
+	Proficiencies      []Proficiency
 	SavingThrows       []Ability
 	StartingEquipment  StartingEquipment
 	ClassLevels        []ClassLevel
@@ -19,6 +19,19 @@ type Class struct {
 
 //SubClass defines a character subclass
 type SubClass struct {
+	Name string
+}
+
+//ProficiencyChoice describe the number and choices for Class skill proficiencies
+type ProficiencyChoice struct {
+	Choose int
+	Type   string
+	From   []Proficiency
+}
+
+//Proficiency describes a base Class proficiency
+type Proficiency struct {
+	Name string
 }
 
 //ClassLevel describes the level-specific details for a class
