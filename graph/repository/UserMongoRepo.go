@@ -41,11 +41,15 @@ func (m userMongoRepo) InsertUser(ui domain.User) (*domain.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("\nu.ID: %+v", u.ID)
 	err = sc.DB("dnd5e").C("users").FindId(u.ID).One(&u)
 	if err != nil {
+		if err.Error() == "not found" {
+			return nil, domain.ErrUserNotFound
+		}
 		return nil, err
 	}
-	log.Printf("&u after find: %+v", u)
+	log.Printf("\n&u after find: %+v", u)
 
 	// convert to domain user
 	ur := domain.User{
@@ -83,6 +87,9 @@ func (m userMongoRepo) GetUserByID(ui domain.User) (*domain.User, error) {
 
 	err := sc.DB("dnd5e").C("users").FindId(u.ID).One(&u)
 	if err != nil {
+		if err.Error() == "not found" {
+			return nil, domain.ErrUserNotFound
+		}
 		return nil, err
 	}
 
@@ -111,10 +118,11 @@ func (m userMongoRepo) GetUserByEmail(e string) (*domain.User, error) {
 
 	err := sc.DB("dnd5e").C("users").Find(bson.M{"email": e}).One(&u)
 	if err != nil {
-		log.Printf("\nERROR FINDING BY EMAIL: %+v", err)
+		if err.Error() == "not found" {
+			return nil, domain.ErrUserNotFound
+		}
 		return nil, err
 	}
-
 	log.Printf("%+v", u)
 
 	ur := domain.User{
