@@ -68,7 +68,7 @@ func (r raceMongoRepo) GetRaceByID(id string) (*domain.Race, error) {
 	rm := RaceMongo{
 		ID: bson.ObjectIdHex(id),
 	}
-	err := r.session.DB("dnd5e").C("races").FindId(rm.ID).One(&rm)
+	err := r.session.DB("dnd5e").C("races").With(r.session.Copy()).FindId(rm.ID).One(&rm)
 	if err != nil {
 		return nil, err
 	}

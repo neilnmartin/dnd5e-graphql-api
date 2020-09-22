@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"log"
 
 	"gopkg.in/mgo.v2"
 
@@ -23,26 +24,28 @@ type userMongoRepo struct {
 	session *mgo.Session
 }
 
-// CreateUser will create a domain User in the database
-func (m userMongoRepo) CreateUser(ui domain.User) (*domain.User, error) {
+// InsertUser will create a domain User in the database
+func (m userMongoRepo) InsertUser(ui domain.User) (*domain.User, error) {
 	sc := m.session.Copy()
 	defer sc.Close()
 
 	u := UserMongo{
 		ID:         bson.NewObjectId(),
+		Email:      ui.Email,
 		GivenName:  ui.Name.GivenName,
 		FamilyName: ui.Name.FamilyName,
 		Password:   ui.Password,
 	}
 
-	err := sc.DB("rest-game").C("users").Insert(u)
+	err := sc.DB("dnd5e").C("users").Insert(u)
 	if err != nil {
 		return nil, err
 	}
-	err = sc.DB("rest-game").C("users").FindId(u.ID).One(&u)
+	err = sc.DB("dnd5e").C("users").FindId(u.ID).One(&u)
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("&u after find: %+v", u)
 
 	// convert to domain user
 	ur := domain.User{
@@ -53,6 +56,7 @@ func (m userMongoRepo) CreateUser(ui domain.User) (*domain.User, error) {
 			FamilyName: u.FamilyName,
 		},
 	}
+	log.Printf("\ninserted, converted to domain user: \n%+v", ur)
 
 	return &ur, nil
 }
@@ -77,7 +81,10 @@ func (m userMongoRepo) GetUserByID(ui domain.User) (*domain.User, error) {
 		Password:   ui.Password,
 	}
 
-	sc.DB("rest-game").C("users").FindId(u.ID).One(&u)
+	err := sc.DB("dnd5e").C("users").FindId(u.ID).One(&u)
+	if err != nil {
+		return nil, err
+	}
 
 	ur := domain.User{
 		ID: u.ID.Hex(),
@@ -95,14 +102,20 @@ func (m userMongoRepo) GetUserByID(ui domain.User) (*domain.User, error) {
 func (m userMongoRepo) GetUserByEmail(e string) (*domain.User, error) {
 	sc := m.session.Copy()
 	defer sc.Close()
-	fmt.Printf("email %v", e)
-	fmt.Printf("email TYPE %T", e)
+	fmt.Printf("\nemail %v", e)
+	fmt.Printf("\nemail TYPE %T", e)
 
 	u := UserMongo{
 		Email: e,
 	}
 
-	sc.DB("dnd5e").C("users").Find(e).One(&u)
+	err := sc.DB("dnd5e").C("users").Find(bson.M{"email": e}).One(&u)
+	if err != nil {
+		log.Printf("\nERROR FINDING BY EMAIL: %+v", err)
+		return nil, err
+	}
+
+	log.Printf("%+v", u)
 
 	ur := domain.User{
 		ID: u.ID.Hex(),
