@@ -16,8 +16,13 @@ type Race struct {
 
 //SubRace describes the subraces of the Race
 type SubRace struct {
+	ID   string
+	Name string
 }
 
 //Trait describes a racial trait
 type Trait struct {
+	ID          string
+	Name        string
+	Description string
 }

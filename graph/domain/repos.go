@@ -2,7 +2,7 @@ package domain
 
 // UserRepo describes the race repository with Race related methods
 type UserRepo interface {
-	CreateUser(u User) (*User, error)
+	InsertUser(u User) (*User, error)
 	GetUserByID(u User) (*User, error)
 	GetUserByEmail(e string) (*User, error)
 }
