@@ -1,6 +1,7 @@
 package application
 
 import (
+	"errors"
 	"log"
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
@@ -10,28 +11,28 @@ import (
 // LogInResponse consists of the logged in User as well as the token
 type LogInResponse struct {
 	User  *domain.User
-	token string
+	Token string
 }
 
 // LogInUserService logs in a user by comparing password hashes and returning a token
-func LogInUserService(email string, password string) (*LogInResponse, error) {
+func LogInUserService(email string, password string) (*domain.User, error) {
 	log.Println("reached login service")
 
 	dbu, err := db.UserRepo.GetUserByEmail(email)
 	if err != nil {
-		log.Printf("%v", err)
+		if err.Error() == "not found" {
+			return nil, errors.New("User does not exist")
+		}
+		log.Printf("\nLogin Error: %+v", err)
 		return nil, err
 	}
 
 	hpw := []byte(dbu.Password)
 	err = bcrypt.CompareHashAndPassword(hpw, []byte(password))
 	if err != nil {
-		log.Printf("%v", err) // throw error
-		return nil, err
+		log.Printf("\nHash compare error: %+v", err) // throw error
+		return nil, errors.New("Incorrect password")
 	}
 
-	return &LogInResponse{
-		User:  dbu,
-		token: "token",
-	}, nil
+	return dbu, nil
 }
