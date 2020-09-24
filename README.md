@@ -4,10 +4,9 @@ WIP: graphql api for DnD 5e built with Go
 ## Instructions to run locally: 
 Install go module packages
 `go get`
-Generate graphql models and resolvers
-`make generate`
-Start server
-`make start`
+
+Generate, build and run:
+`make all`
 
 ### Description:
   A graphql api for Dungeons and Dragons 5th Edition written in Go. 
@@ -27,7 +26,7 @@ Start server
 
   Identity management: currently the plan is to have boilerplate auth flows within the graphql api. But in the future may consider splitting into a federation (since gqlgen has support for that with a config) and having a dedicated identity microservice.
 
-  Deployment: Google App Engine?
+  Deployment: Google App Engine? Terraform + AWS?
   
   Base product goals: 
   - have public graphql api for dungeons and dragons 5th edition information
@@ -54,5 +53,4 @@ A list of query-able Dungeons & Dragons 5th Edition entities (not exhaustive):
 
 [There is a tendency in tech to focus on the tool instead of the outcome](https://www.youtube.com/watch?v=GBTdnfD6s5Q)
 With this in mind, why would I choose to build a graphql server in Go, when one in TypeScript would be so much faster?
-Well one of the goals of this project is precisely to become more familiar with a tool (in this case the Go language) and be able to feel comfortable writing idiomatic code.
-And since I have accumulated experience working with production graphql servers I am familiar with a desirable outcome, and have a goal to work towards.
+Well one of the goals of this project is precisely to become more familiar with a tool (in this case the Go language) and be able to feel comfortable writing idiomatic, efficient code. As a web developer, I am hoping once I am comfortable in this arena I will be able to expand into writing CLI tools and perhaps contributing to open source Go projects.
