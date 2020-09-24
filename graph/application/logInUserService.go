@@ -20,7 +20,7 @@ func LogInUserService(email string, password string) (*domain.User, error) {
 
 	dbu, err := db.UserRepo.GetUserByEmail(email)
 	if err != nil {
-		if err.Error() == "not found" {
+		if err == domain.ErrUserNotFound {
 			return nil, errors.New("User does not exist")
 		}
 		log.Printf("\nLogin Error: %+v", err)
