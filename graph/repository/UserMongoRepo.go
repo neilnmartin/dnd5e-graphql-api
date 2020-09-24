@@ -24,6 +24,11 @@ type userMongoRepo struct {
 	session *mgo.Session
 }
 
+//GenerateNewID
+func (m userMongoRepo) GenerateNewID() string {
+	return bson.NewObjectId().Hex()
+}
+
 // InsertUser will create a domain User in the database
 func (m userMongoRepo) InsertUser(ui domain.User) (*domain.User, error) {
 	sc := m.session.Copy()

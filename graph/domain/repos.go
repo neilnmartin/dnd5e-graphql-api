@@ -5,6 +5,7 @@ type UserRepo interface {
 	InsertUser(u User) (*User, error)
 	GetUserByID(u User) (*User, error)
 	GetUserByEmail(e string) (*User, error)
+	GenerateNewID() string
 }
 
 // RaceRepo describes the race repository with Race related methods
