@@ -18,6 +18,9 @@ var (
 	//ErrClassNotFound when repository fails to find a Class matching an input
 	ErrClassNotFound = errors.New("Class not found")
 
+	//ErrSubClassNotFound when repository fails to find a SubClass matching an input
+	ErrSubClassNotFound = errors.New("SubClass not found")
+
 	//ErrSpellNotFound when repository fails to find a Spell matching an input
 	ErrSpellNotFound = errors.New("Spell not found")
 

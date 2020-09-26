@@ -84,7 +84,7 @@ func mapClassToDomain(cm *ClassMongo) *domain.Class {
 }
 
 // GetClassByID receives a domain Class and gets a database Class matching its id
-func (r classMongoRepo) GetClassByID(id string) (*domain.Class, error) {
+func (c classMongoRepo) GetClassByID(id string) (*domain.Class, error) {
 	fmt.Printf("ID %v", id)
 	i := bson.IsObjectIdHex(id)
 	if !i {
@@ -94,7 +94,7 @@ func (r classMongoRepo) GetClassByID(id string) (*domain.Class, error) {
 	rm := ClassMongo{
 		ID: bson.ObjectIdHex(id),
 	}
-	err := r.session.DB("dnd5e").C("Classs").FindId(rm.ID).One(&rm)
+	err := c.session.DB("dnd5e").C("Classs").FindId(rm.ID).One(&rm)
 	if err != nil {
 		return nil, err
 	}
@@ -102,22 +102,22 @@ func (r classMongoRepo) GetClassByID(id string) (*domain.Class, error) {
 }
 
 // GetClassByName receives a domain Class and gets a database Class matching its name
-func (r classMongoRepo) GetClassByName(name string) (*domain.Class, error) {
+func (c classMongoRepo) GetClassByName(name string) (*domain.Class, error) {
 	rm := ClassMongo{
 		Name: name,
 	}
-	err := r.session.DB("dnd5e").C("classes").With(r.session.Copy()).Find(bson.M{"name": name}).One(&rm)
+	err := c.session.DB("dnd5e").C("classes").With(c.session.Copy()).Find(bson.M{"name": name}).One(&rm)
 	if err != nil {
 		return nil, err
 	}
 	return mapClassToDomain(&rm), nil
 }
 
-func (r classMongoRepo) GetAllClasses() (*[]*domain.Class, error) {
+func (c classMongoRepo) GetAllClasses() (*[]*domain.Class, error) {
 	log.Println("hit mongo repo get all classes")
 	// fetch
 	allClasses := []ClassMongo{}
-	err := r.session.DB("dnd5e").C("classes").With(r.session.Copy()).Find(bson.M{}).All(&allClasses)
+	err := c.session.DB("dnd5e").C("classes").With(c.session.Copy()).Find(bson.M{}).All(&allClasses)
 	if err != nil {
 		return nil, err
 	}
@@ -128,4 +128,19 @@ func (r classMongoRepo) GetAllClasses() (*[]*domain.Class, error) {
 		domainClasses = append(domainClasses, mapClassToDomain(&ac))
 	}
 	return &domainClasses, nil
+}
+
+func (c classMongoRepo) GetSubClassByName(name string) (*domain.SubClass, error) {
+	scm := SubClassMongo{}
+	err := c.session.DB("dnd5e").C("subclasses").With(c.session.Copy()).Find(bson.M{"name": name}).One(&scm)
+	if err != nil {
+		if err.Error() == "not found" {
+			return nil, domain.ErrSubClassNotFound
+		}
+		return nil, err
+	}
+	return &domain.SubClass{
+		ID:   scm.ID,
+		Name: scm.Name,
+	}, nil
 }

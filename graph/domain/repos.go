@@ -20,4 +20,6 @@ type ClassRepo interface {
 	GetClassByID(id string) (*Class, error)
 	GetClassByName(name string) (*Class, error)
 	GetAllClasses() (*[]*Class, error)
+	//SubClass
+	GetSubClassByName(name string) (*SubClass, error)
 }
