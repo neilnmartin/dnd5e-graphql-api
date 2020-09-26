@@ -34,8 +34,10 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Class() ClassResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
+	Race() RaceResolver
 }
 
 type DirectiveRoot struct {
@@ -132,7 +134,9 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		Class   func(childComplexity int) int
 		Classes func(childComplexity int) int
+		Race    func(childComplexity int) int
 		Races   func(childComplexity int) int
 		User    func(childComplexity int) int
 	}
@@ -208,6 +212,9 @@ type ComplexityRoot struct {
 	}
 }
 
+type ClassResolver interface {
+	SubClasses(ctx context.Context, obj *model.Class) ([]*model.SubClass, error)
+}
 type MutationResolver interface {
 	CreateCharacter(ctx context.Context, input model.CreateCharacterInput) (*model.Character, error)
 	SignUpUser(ctx context.Context, input model.UserInput) (*model.User, error)
@@ -215,8 +222,13 @@ type MutationResolver interface {
 }
 type QueryResolver interface {
 	User(ctx context.Context) (*model.User, error)
+	Class(ctx context.Context) (*model.Class, error)
+	Race(ctx context.Context) (*model.Race, error)
 	Races(ctx context.Context) ([]*model.Race, error)
 	Classes(ctx context.Context) ([]*model.Class, error)
+}
+type RaceResolver interface {
+	SubRaces(ctx context.Context, obj *model.Race) ([]*model.SubRace, error)
 }
 
 type executableSchema struct {
@@ -599,12 +611,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProficiencyChoice.Type(childComplexity), true
 
+	case "Query.class":
+		if e.complexity.Query.Class == nil {
+			break
+		}
+
+		return e.complexity.Query.Class(childComplexity), true
+
 	case "Query.classes":
 		if e.complexity.Query.Classes == nil {
 			break
 		}
 
 		return e.complexity.Query.Classes(childComplexity), true
+
+	case "Query.race":
+		if e.complexity.Query.Race == nil {
+			break
+		}
+
+		return e.complexity.Query.Race(childComplexity), true
 
 	case "Query.races":
 		if e.complexity.Query.Races == nil {
@@ -1143,13 +1169,14 @@ type Spell {
 }
 
 type Character {
+  # identification
   id: ID
   user: User!
-  ##
+  ## metadata
   name: String!
   age: Int!
   level: Int!
-  ##
+  ## 5E data
   race: Race!
   subRace: SubRace
   class: Class!
@@ -1189,6 +1216,8 @@ input CreateCharacterInput {
 
 type Query {
   user: User
+  class: Class
+  race: Race
   races: [Race!]
   classes: [Class!]
 }
@@ -2107,13 +2136,13 @@ func (ec *executionContext) _Class_subClasses(ctx context.Context, field graphql
 		Object:   "Class",
 		Field:    field,
 		Args:     nil,
-		IsMethod: false,
+		IsMethod: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.SubClasses, nil
+		return ec.resolvers.Class().SubClasses(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2950,6 +2979,68 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	return ec.marshalOUser2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_class(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Class(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Class)
+	fc.Result = res
+	return ec.marshalOClass2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐClass(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_race(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Race(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Race)
+	fc.Result = res
+	return ec.marshalORace2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐRace(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_races(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3247,13 +3338,13 @@ func (ec *executionContext) _Race_subRaces(ctx context.Context, field graphql.Co
 		Object:   "Race",
 		Field:    field,
 		Args:     nil,
-		IsMethod: false,
+		IsMethod: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.SubRaces, nil
+		return ec.resolvers.Race().SubRaces(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5871,7 +5962,16 @@ func (ec *executionContext) _Class(ctx context.Context, sel ast.SelectionSet, ob
 		case "classLevels":
 			out.Values[i] = ec._Class_classLevels(ctx, field, obj)
 		case "subClasses":
-			out.Values[i] = ec._Class_subClasses(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Class_subClasses(ctx, field, obj)
+				return res
+			})
 		case "spellcasting":
 			out.Values[i] = ec._Class_spellcasting(ctx, field, obj)
 		case "url":
@@ -6186,6 +6286,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				res = ec._Query_user(ctx, field)
 				return res
 			})
+		case "class":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_class(ctx, field)
+				return res
+			})
+		case "race":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_race(ctx, field)
+				return res
+			})
 		case "races":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -6245,7 +6367,16 @@ func (ec *executionContext) _Race(ctx context.Context, sel ast.SelectionSet, obj
 		case "perks":
 			out.Values[i] = ec._Race_perks(ctx, field, obj)
 		case "subRaces":
-			out.Values[i] = ec._Race_subRaces(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Race_subRaces(ctx, field, obj)
+				return res
+			})
 		case "age":
 			out.Values[i] = ec._Race_age(ctx, field, obj)
 		case "speed":

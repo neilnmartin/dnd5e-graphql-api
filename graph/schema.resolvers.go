@@ -20,6 +20,7 @@ func (r *mutationResolver) CreateCharacter(ctx context.Context, input model.Crea
 }
 
 func (r *mutationResolver) SignUpUser(ctx context.Context, input model.UserInput) (*model.User, error) {
+	log.Printf("hit signup mutation resolver")
 	ur := repository.DB.UserRepo
 	dn := domain.Name{
 		GivenName:  input.Name.GivenName,
@@ -29,14 +30,17 @@ func (r *mutationResolver) SignUpUser(ctx context.Context, input model.UserInput
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("\nResolver before model convert: %+v", u)
 	// convert from domain to api model
 	mu := &model.User{
+		ID:    u.ID,
 		Email: u.Email,
 		Name: &model.Name{
 			GivenName:  u.GivenName,
 			FamilyName: u.FamilyName,
 		},
 	}
+	log.Printf("\nResolver after model convert: %+v", mu)
 	return mu, nil
 }
 
@@ -45,19 +49,31 @@ func (r *mutationResolver) LoginUser(ctx context.Context, input model.LoginInput
 	if err != nil {
 		return nil, err
 	}
+
+	idToken := "TODO"
+
 	return &model.LoginResponse{
 		User: &model.User{
-			Email: lu.User.Email,
+			ID:    lu.ID,
+			Email: lu.Email,
 			Name: &model.Name{
-				GivenName:  lu.User.GivenName,
-				FamilyName: lu.User.FamilyName,
+				GivenName:  lu.GivenName,
+				FamilyName: lu.FamilyName,
 			},
 		},
-		// Token: l.Token,
+		Token: idToken,
 	}, nil
 }
 
 func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Class(ctx context.Context) (*model.Class, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Race(ctx context.Context) (*model.Race, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

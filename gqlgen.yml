@@ -54,8 +54,12 @@ models:
       - github.com/99designs/gqlgen/graphql.Int
       - github.com/99designs/gqlgen/graphql.Int64
       - github.com/99designs/gqlgen/graphql.Int32
-  # Races:
-  #   fields:
-  #     length:
-  #       resolver: true
+  Class:
+    fields:
+      subClasses:
+        resolver: true
+  Race:
+    fields:
+      subRaces:
+        resolver: true
 

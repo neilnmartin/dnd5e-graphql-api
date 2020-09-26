@@ -66,13 +66,14 @@ type Spell {
 }
 
 type Character {
+  # identification
   id: ID
   user: User!
-  ##
+  ## metadata
   name: String!
   age: Int!
   level: Int!
-  ##
+  ## 5E data
   race: Race!
   subRace: SubRace
   class: Class!
@@ -112,6 +113,8 @@ input CreateCharacterInput {
 
 type Query {
   user: User
+  class: Class
+  race: Race
   races: [Race!]
   classes: [Class!]
 }
