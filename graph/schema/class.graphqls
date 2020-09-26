@@ -15,7 +15,7 @@ type Class {
 type SubClass {
   id: ID
   name: String
-  class: String
+  class: Class
 }
 
 type ClassLevel {

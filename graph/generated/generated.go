@@ -1049,7 +1049,7 @@ var sources = []*ast.Source{
 type SubClass {
   id: ID
   name: String
-  class: String
+  class: Class
 }
 
 type ClassLevel {
@@ -4261,9 +4261,9 @@ func (ec *executionContext) _SubClass_class(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*model.Class)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOClass2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐClass(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _SubRace_id(ctx context.Context, field graphql.CollectedField, obj *model.SubRace) (ret graphql.Marshaler) {

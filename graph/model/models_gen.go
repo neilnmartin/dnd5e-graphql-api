@@ -148,7 +148,7 @@ type StartingEquipment struct {
 type SubClass struct {
 	ID    *string `json:"id"`
 	Name  *string `json:"name"`
-	Class *string `json:"class"`
+	Class *Class  `json:"class"`
 }
 
 type SubRace struct {
