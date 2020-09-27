@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/neilnmartin/dnd5e-graphql-api/utils"
+
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/application"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/generated"
@@ -50,7 +52,16 @@ func (r *mutationResolver) LoginUser(ctx context.Context, input model.LoginInput
 		return nil, err
 	}
 
-	idToken := "TODO"
+	idToken, err := utils.GenerateJWT(utils.IDToken{
+		ID: lu.ID,
+		Name: model.Name{
+			GivenName:  lu.Name.GivenName,
+			FamilyName: lu.Name.FamilyName,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
 
 	return &model.LoginResponse{
 		User: &model.User{
@@ -61,7 +72,7 @@ func (r *mutationResolver) LoginUser(ctx context.Context, input model.LoginInput
 				FamilyName: lu.FamilyName,
 			},
 		},
-		Token: idToken,
+		Token: *idToken,
 	}, nil
 }
 
