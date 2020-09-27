@@ -12,6 +12,7 @@ import (
 
 //SubClassMongo describes the subclass of the Class
 type SubClassMongo struct {
+	ID   string `json:"_id" bson:"_id"`
 	Name string `json:"name" bson:"name"`
 }
 
