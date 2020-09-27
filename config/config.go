@@ -11,8 +11,9 @@ import (
 
 //AppConfig is the application configuration schema
 type AppConfig struct {
-	Persistence string
-	MongoConfig *MongoConfig
+	IDTokenSecretKey string
+	Persistence      string
+	MongoConfig      *MongoConfig
 }
 
 // MongoConfig describes a mongo cluster configuration
@@ -33,7 +34,8 @@ func createConfig() *AppConfig {
 	}
 
 	config := &AppConfig{
-		Persistence: *getVar("PERSISTENCE"),
+		IDTokenSecretKey: *getVar("ID_TOKEN_SECRET_KEY"),
+		Persistence:      *getVar("PERSISTENCE"),
 		MongoConfig: &MongoConfig{
 			MongoClusterAddr1: *getVar("MONGO_CLUSTER_ADDR_1"),
 			MongoClusterAddr2: *getVar("MONGO_CLUSTER_ADDR_2"),
