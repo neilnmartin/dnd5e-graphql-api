@@ -14,11 +14,14 @@ import (
 func (r *classResolver) SubClasses(ctx context.Context, obj *model.Class) ([]*model.SubClass, error) {
 	scm := []*model.SubClass{}
 	for _, osc := range obj.SubClasses {
-		sc := repository.DB.ClassRepo.GetSubClassByName(osc.Name)
+		sc, err := repository.DB.ClassRepo.GetSubClassByName(*osc.Name)
+		if err != nil {
+			return nil, err
+		}
 		scm = append(scm, &model.SubClass{
-			ID:    sc.ID,
-			Name:  sc.Name,
-			Class: obj.Name,
+			ID:    &sc.ID,
+			Name:  &sc.Name,
+			Class: obj,
 		})
 	}
 	return scm, nil
