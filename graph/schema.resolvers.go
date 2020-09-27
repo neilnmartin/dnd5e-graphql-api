@@ -69,8 +69,16 @@ func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Class(ctx context.Context) (*model.Class, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) Class(ctx context.Context, name string) (*model.Class, error) {
+	cd, err := repository.DB.ClassRepo.GetClassByName(name)
+	if err != nil {
+		return nil, err
+	}
+	return &model.Class{
+		ID:     &cd.ID,
+		Name:   &cd.Name,
+		HitDie: &cd.HitDie,
+	}, nil
 }
 
 func (r *queryResolver) Race(ctx context.Context) (*model.Race, error) {

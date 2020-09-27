@@ -29,17 +29,17 @@ type Character struct {
 }
 
 type Class struct {
-	ID                 *string            `json:"id"`
-	Name               *string            `json:"name"`
-	HitDie             *int               `json:"hitDie"`
-	ProficiencyChoices *ProficiencyChoice `json:"proficiencyChoices"`
-	Proficiencies      []*Proficiency     `json:"proficiencies"`
-	SavingThrows       []*Ability         `json:"savingThrows"`
-	StartingEquipment  *StartingEquipment `json:"startingEquipment"`
-	ClassLevels        []*ClassLevel      `json:"classLevels"`
-	SubClasses         []*SubClass        `json:"subClasses"`
-	Spellcasting       *Ability           `json:"spellcasting"`
-	URL                *string            `json:"url"`
+	ID                 *string             `json:"id"`
+	Name               *string             `json:"name"`
+	HitDie             *int                `json:"hitDie"`
+	ProficiencyChoices *ProficiencyChoices `json:"proficiencyChoices"`
+	Proficiencies      []*Proficiency      `json:"proficiencies"`
+	SavingThrows       []*Ability          `json:"savingThrows"`
+	StartingEquipment  *StartingEquipment  `json:"startingEquipment"`
+	ClassLevels        []*ClassLevel       `json:"classLevels"`
+	SubClasses         []*SubClass         `json:"subClasses"`
+	Spellcasting       *Ability            `json:"spellcasting"`
+	URL                *string             `json:"url"`
 }
 
 type ClassLevel struct {
@@ -95,7 +95,7 @@ type Proficiency struct {
 	Name *string `json:"name"`
 }
 
-type ProficiencyChoice struct {
+type ProficiencyChoices struct {
 	Choose *int           `json:"choose"`
 	Type   *string        `json:"type"`
 	From   []*Proficiency `json:"from"`
