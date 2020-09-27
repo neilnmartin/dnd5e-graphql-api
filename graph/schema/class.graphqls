@@ -2,7 +2,7 @@ type Class {
   id: ID
   name: String
   hitDie: Int
-  proficiencyChoices: ProficiencyChoice
+  proficiencyChoices: ProficiencyChoices
   proficiencies:[Proficiency]
   savingThrows: [Ability]
   startingEquipment: StartingEquipment
@@ -24,7 +24,7 @@ type ClassLevel {
   features: [Feature]
 }
 
-type ProficiencyChoice {
+type ProficiencyChoices {
   choose: Int
   type: String
   from: [Proficiency]
