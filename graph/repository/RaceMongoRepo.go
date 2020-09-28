@@ -137,7 +137,7 @@ func (r raceMongoRepo) GetTraitByName(name string) (*domain.Trait, error) {
 	tm := TraitMongo{
 		Name: name,
 	}
-	err := r.session.DB("dnd5e").C("subraces").With(r.session.Copy()).Find(bson.M{"name": name}).One(&tm)
+	err := r.session.DB("dnd5e").C("traits").With(r.session.Copy()).Find(bson.M{"name": name}).One(&tm)
 	if err != nil {
 		if err.Error() == "not found" {
 			return nil, domain.ErrSubClassNotFound

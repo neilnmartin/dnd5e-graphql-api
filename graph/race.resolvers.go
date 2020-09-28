@@ -5,18 +5,45 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/generated"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/model"
+	"github.com/neilnmartin/dnd5e-graphql-api/graph/repository"
 )
 
 func (r *raceResolver) SubRaces(ctx context.Context, obj *model.Race) ([]*model.SubRace, error) {
-	panic(fmt.Errorf("not implemented"))
+	scm := []*model.SubRace{}
+	for _, osc := range obj.SubRaces {
+		sc, err := repository.DB.RaceRepo.GetSubRaceByName(*osc.Name)
+		if err != nil {
+			return nil, err
+		}
+		scm = append(scm, &model.SubRace{
+			ID:          &sc.ID,
+			Name:        &sc.Name,
+			Description: &sc.Description,
+			Flavor:      &sc.Flavor,
+		})
+	}
+
+	return scm, nil
 }
 
 func (r *raceResolver) Traits(ctx context.Context, obj *model.Race) ([]*model.Trait, error) {
-	panic(fmt.Errorf("not implemented"))
+	tsm := []*model.Trait{}
+	for _, tm := range obj.Traits {
+		sc, err := repository.DB.RaceRepo.GetTraitByName(*tm.Name)
+		if err != nil {
+			return nil, err
+		}
+		tsm = append(tsm, &model.Trait{
+			ID:          &sc.ID,
+			Name:        &sc.Name,
+			Description: &sc.Description,
+		})
+	}
+
+	return scm, nil
 }
 
 // Race returns generated.RaceResolver implementation.
