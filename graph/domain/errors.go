@@ -15,6 +15,12 @@ var (
 	//ErrRaceNotFound when repository fails to find a Race matching an input
 	ErrRaceNotFound = errors.New("Race not found")
 
+	//ErrSubRaceNotFound when repository fails to find a SubRace matching an input
+	ErrSubRaceNotFound = errors.New("SubRace not found")
+
+	//ErrTraitNotFound when repository fails to find a Trait matching an input
+	ErrTraitNotFound = errors.New("Trait not found")
+
 	//ErrClassNotFound when repository fails to find a Class matching an input
 	ErrClassNotFound = errors.New("Class not found")
 
