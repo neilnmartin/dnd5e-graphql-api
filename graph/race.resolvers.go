@@ -15,6 +15,10 @@ func (r *raceResolver) SubRaces(ctx context.Context, obj *model.Race) ([]*model.
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *raceResolver) Traits(ctx context.Context, obj *model.Race) ([]*model.Trait, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 // Race returns generated.RaceResolver implementation.
 func (r *Resolver) Race() generated.RaceResolver { return &raceResolver{r} }
 

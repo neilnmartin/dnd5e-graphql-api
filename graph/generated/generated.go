@@ -232,6 +232,8 @@ type QueryResolver interface {
 }
 type RaceResolver interface {
 	SubRaces(ctx context.Context, obj *model.Race) ([]*model.SubRace, error)
+
+	Traits(ctx context.Context, obj *model.Race) ([]*model.Trait, error)
 }
 
 type executableSchema struct {
@@ -1123,7 +1125,7 @@ type Trait {
   races: [Race]
   subRaces: [SubRace]
   name: String
-  description: [String]
+  description: String
 }`, BuiltIn: false},
 	{Name: "graph/schema/schema.graphqls", Input: `type User {
   id: ID!
@@ -3697,13 +3699,13 @@ func (ec *executionContext) _Race_traits(ctx context.Context, field graphql.Coll
 		Object:   "Race",
 		Field:    field,
 		Args:     nil,
-		IsMethod: false,
+		IsMethod: true,
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Traits, nil
+		return ec.resolvers.Race().Traits(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4629,9 +4631,9 @@ func (ec *executionContext) _Trait_description(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -6510,7 +6512,16 @@ func (ec *executionContext) _Race(ctx context.Context, sel ast.SelectionSet, obj
 		case "languageDescription":
 			out.Values[i] = ec._Race_languageDescription(ctx, field, obj)
 		case "traits":
-			out.Values[i] = ec._Race_traits(ctx, field, obj)
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Race_traits(ctx, field, obj)
+				return res
+			})
 		case "traitOptions":
 			out.Values[i] = ec._Race_traitOptions(ctx, field, obj)
 		default:

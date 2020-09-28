@@ -164,7 +164,7 @@ type Trait struct {
 	Races       []*Race    `json:"races"`
 	SubRaces    []*SubRace `json:"subRaces"`
 	Name        *string    `json:"name"`
-	Description []*string  `json:"description"`
+	Description *string    `json:"description"`
 }
 
 type User struct {
