@@ -53,3 +53,24 @@ func mapClassFromDomainToAPI(c domain.Class) *model.Class {
 		// ClassLevels        []*ClassLevel      `json:"classLevels"`
 	}
 }
+
+func mapRaceFromDomainToAPI(r domain.Race) *model.Race {
+	msr := []*model.SubRace{}
+	for _, sr := range r.SubRaces {
+		msr = append(msr, &model.SubRace{
+			Name: sr.Name,
+		})
+	}
+	mt := []*model.Trait{}
+	for _, t := range r.Traits {
+		mt = append(mt, &model.Trait{
+			Name: &t.Name,
+		})
+	}
+	return &model.Race{
+		ID:       &r.ID,
+		Name:     &r.Name,
+		SubRaces: msr,
+		Traits:   mt,
+	}
+}
