@@ -3,6 +3,7 @@ package repository
 import (
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
 	"gopkg.in/mgo.v2"
@@ -11,14 +12,23 @@ import (
 
 // SubRaceMongo describes the sub-race associated with the Race
 type SubRaceMongo struct {
-	url  string `bson:"url"`
-	name string `bson:"name"`
+	ID             bson.ObjectId       `json:"_id" bson:"_id"`
+	Name           string              `json:"name" bson:"name"`
+	AbilityBonuses []AbilityBonusMongo `json:"ability_bonuses" bson:"ability_bonuses"`
+}
+
+// AbilityBonusMongo is the abilitybonus associated with the subrace
+type AbilityBonusMongo struct {
+	Name  string `json:"name" bson:"name"`
+	Bonus int    `json:"bonus" bson:"bonus"`
 }
 
 //TraitMongo describes the Trait associated with the Race
 type TraitMongo struct {
-	url  string `bson:"url"`
-	name string `bson:"name"`
+	ID          bson.ObjectId `json:"_id" bson:"_id"`
+	Name        string        `json:"name" bson:"name"`
+	Description []string      `json:"desc" bson:"desc"`
+	Races       []RaceMongo   `json:"races" bson:"races"`
 }
 
 //RaceMongo is the mongodb type for race documents
@@ -104,4 +114,40 @@ func (r raceMongoRepo) GetAllRaces() (*[]*domain.Race, error) {
 		domainRaces = append(domainRaces, mapRaceToDomain(&ar))
 	}
 	return &domainRaces, nil
+}
+
+func (r raceMongoRepo) GetSubRaceByName(name string) (*domain.SubRace, error) {
+	srm := SubRaceMongo{
+		Name: name,
+	}
+	err := r.session.DB("dnd5e").C("subraces").With(r.session.Copy()).Find(bson.M{"name": name}).One(&srm)
+	if err != nil {
+		if err.Error() == "not found" {
+			return nil, domain.ErrSubClassNotFound
+		}
+		return nil, err
+	}
+	log.Printf("\nmongo fetched %+v", srm)
+	return &domain.SubRace{
+		Name: srm.Name,
+	}, nil
+}
+
+func (r raceMongoRepo) GetTraitByName(name string) (*domain.Trait, error) {
+	tm := TraitMongo{
+		Name: name,
+	}
+	err := r.session.DB("dnd5e").C("subraces").With(r.session.Copy()).Find(bson.M{"name": name}).One(&tm)
+	if err != nil {
+		if err.Error() == "not found" {
+			return nil, domain.ErrSubClassNotFound
+		}
+		return nil, err
+	}
+	log.Printf("\nmongo fetched %+v", tm)
+	return &domain.Trait{
+		ID:          tm.ID.Hex(),
+		Name:        tm.Name,
+		Description: tm.Description[0],
+	}, nil
 }
