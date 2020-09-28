@@ -137,7 +137,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Class   func(childComplexity int, name string) int
 		Classes func(childComplexity int) int
-		Race    func(childComplexity int) int
+		Race    func(childComplexity int, name string) int
 		Races   func(childComplexity int) int
 		User    func(childComplexity int) int
 	}
@@ -226,7 +226,7 @@ type MutationResolver interface {
 type QueryResolver interface {
 	User(ctx context.Context) (*model.User, error)
 	Class(ctx context.Context, name string) (*model.Class, error)
-	Race(ctx context.Context) (*model.Race, error)
+	Race(ctx context.Context, name string) (*model.Race, error)
 	Races(ctx context.Context) ([]*model.Race, error)
 	Classes(ctx context.Context) ([]*model.Class, error)
 }
@@ -640,7 +640,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.Race(childComplexity), true
+		args, err := ec.field_Query_race_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Race(childComplexity, args["name"].(string)), true
 
 	case "Query.races":
 		if e.complexity.Query.Races == nil {
@@ -1243,7 +1248,7 @@ input CreateCharacterInput {
 type Query {
   user: User
   class (name: String!): Class!
-  race: Race
+  race (name: String!): Race!
   races: [Race!]
   classes: [Class!]
 }
@@ -1321,6 +1326,21 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 }
 
 func (ec *executionContext) field_Query_class_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("name"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_race_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -3076,20 +3096,30 @@ func (ec *executionContext) _Query_race(ctx context.Context, field graphql.Colle
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_race_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Race(rctx)
+		return ec.resolvers.Query().Race(rctx, args["name"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.Race)
 	fc.Result = res
-	return ec.marshalORace2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐRace(ctx, field.Selections, res)
+	return ec.marshalNRace2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐRace(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_races(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -6422,6 +6452,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_race(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			})
 		case "races":
@@ -7133,6 +7166,10 @@ func (ec *executionContext) marshalNName2ᚖgithubᚗcomᚋneilnmartinᚋdnd5e�
 func (ec *executionContext) unmarshalNNameInput2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐNameInput(ctx context.Context, v interface{}) (*model.NameInput, error) {
 	res, err := ec.unmarshalInputNameInput(ctx, v)
 	return &res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNRace2githubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐRace(ctx context.Context, sel ast.SelectionSet, v model.Race) graphql.Marshaler {
+	return ec._Race(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNRace2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐRace(ctx context.Context, sel ast.SelectionSet, v *model.Race) graphql.Marshaler {

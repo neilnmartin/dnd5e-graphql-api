@@ -14,15 +14,14 @@ import (
 func (r *raceResolver) SubRaces(ctx context.Context, obj *model.Race) ([]*model.SubRace, error) {
 	scm := []*model.SubRace{}
 	for _, osc := range obj.SubRaces {
-		sc, err := repository.DB.RaceRepo.GetSubRaceByName(*osc.Name)
+		sc, err := repository.DB.RaceRepo.GetSubRaceByName(osc.Name)
 		if err != nil {
 			return nil, err
 		}
 		scm = append(scm, &model.SubRace{
-			ID:          &sc.ID,
-			Name:        &sc.Name,
-			Description: &sc.Description,
-			Flavor:      &sc.Flavor,
+			ID:   sc.ID,
+			Race: obj,
+			Name: sc.Name,
 		})
 	}
 
@@ -43,7 +42,7 @@ func (r *raceResolver) Traits(ctx context.Context, obj *model.Race) ([]*model.Tr
 		})
 	}
 
-	return scm, nil
+	return tsm, nil
 }
 
 // Race returns generated.RaceResolver implementation.
