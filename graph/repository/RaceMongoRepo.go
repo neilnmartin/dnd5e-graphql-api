@@ -9,10 +9,13 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+// SubRaceMongo describes the sub-race associated with the Race
 type SubRaceMongo struct {
 	url  string `bson:"url"`
 	name string `bson:"name"`
 }
+
+//TraitMongo describes the Trait associated with the Race
 type TraitMongo struct {
 	url  string `bson:"url"`
 	name string `bson:"name"`

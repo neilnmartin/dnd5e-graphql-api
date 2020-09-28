@@ -6,14 +6,17 @@ import (
 	"log"
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
+	"github.com/neilnmartin/dnd5e-graphql-api/utils"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 )
 
 //SubClassMongo describes the subclass of the Class
 type SubClassMongo struct {
-	ID   string `json:"_id" bson:"_id"`
-	Name string `json:"name" bson:"name"`
+	ID          bson.ObjectId `json:"_id" bson:"_id"`
+	Name        string        `json:"name" bson:"name"`
+	Description []string      `json:"desc" bson:"desc"`
+	Flavor      string        `json:"subclass_flavor" bson:"subclass_flavor"`
 }
 
 //ProficiencyChoiceMongo describe the number and choices for Class skill proficiencies
@@ -52,6 +55,7 @@ func mapClassToDomain(cm *ClassMongo) *domain.Class {
 	for _, sc := range cm.SubClasses {
 		dsc = append(dsc, domain.SubClass{
 			Name: sc.Name,
+			// Description: sc.Description[0],
 		})
 	}
 	dp := []domain.Proficiency{}
@@ -74,7 +78,7 @@ func mapClassToDomain(cm *ClassMongo) *domain.Class {
 			From:   pcf,
 		})
 	}
-	return &domain.Class{
+	rdc := &domain.Class{
 		ID:                 cm.ID.Hex(),
 		Name:               cm.Name,
 		HitDie:             cm.HitDie,
@@ -82,6 +86,8 @@ func mapClassToDomain(cm *ClassMongo) *domain.Class {
 		Proficiencies:      dp,
 		SubClasses:         dsc,
 	}
+	log.Printf("mapped class return %+v", utils.PrettyPrint(rdc))
+	return rdc
 }
 
 // GetClassByID receives a domain Class and gets a database Class matching its id
@@ -111,6 +117,7 @@ func (c classMongoRepo) GetClassByName(name string) (*domain.Class, error) {
 	if err != nil {
 		return nil, err
 	}
+	log.Printf("\n fetched class mongo: %+v", rm)
 	return mapClassToDomain(&rm), nil
 }
 
@@ -132,7 +139,10 @@ func (c classMongoRepo) GetAllClasses() (*[]*domain.Class, error) {
 }
 
 func (c classMongoRepo) GetSubClassByName(name string) (*domain.SubClass, error) {
-	scm := SubClassMongo{}
+	log.Printf("\nhit get subclass by name: %+v", name)
+	scm := SubClassMongo{
+		Name: name,
+	}
 	err := c.session.DB("dnd5e").C("subclasses").With(c.session.Copy()).Find(bson.M{"name": name}).One(&scm)
 	if err != nil {
 		if err.Error() == "not found" {
@@ -140,8 +150,11 @@ func (c classMongoRepo) GetSubClassByName(name string) (*domain.SubClass, error)
 		}
 		return nil, err
 	}
+	log.Printf("\nmongo fetched %+v", scm)
 	return &domain.SubClass{
-		ID:   scm.ID,
-		Name: scm.Name,
+		ID:          scm.ID.Hex(),
+		Name:        scm.Name,
+		Flavor:      scm.Flavor,
+		Description: scm.Description[0],
 	}, nil
 }
