@@ -8,13 +8,12 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/neilnmartin/dnd5e-graphql-api/utils"
-
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/application"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/domain"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/generated"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/model"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/repository"
+	"github.com/neilnmartin/dnd5e-graphql-api/utils"
 )
 
 func (r *mutationResolver) CreateCharacter(ctx context.Context, input model.CreateCharacterInput) (*model.Character, error) {
@@ -85,11 +84,8 @@ func (r *queryResolver) Class(ctx context.Context, name string) (*model.Class, e
 	if err != nil {
 		return nil, err
 	}
-	return &model.Class{
-		ID:     &cd.ID,
-		Name:   &cd.Name,
-		HitDie: &cd.HitDie,
-	}, nil
+	log.Printf("\nhit class query resolver,\nfetched domain class: %+v", utils.PrettyPrint(cd))
+	return mapClassFromDomainToAPI(*cd), nil
 }
 
 func (r *queryResolver) Race(ctx context.Context) (*model.Race, error) {

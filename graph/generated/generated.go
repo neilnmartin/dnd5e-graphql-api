@@ -187,9 +187,11 @@ type ComplexityRoot struct {
 	}
 
 	SubClass struct {
-		Class func(childComplexity int) int
-		ID    func(childComplexity int) int
-		Name  func(childComplexity int) int
+		Class       func(childComplexity int) int
+		Description func(childComplexity int) int
+		Flavor      func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
 	}
 
 	SubRace struct {
@@ -883,6 +885,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SubClass.Class(childComplexity), true
 
+	case "SubClass.description":
+		if e.complexity.SubClass.Description == nil {
+			break
+		}
+
+		return e.complexity.SubClass.Description(childComplexity), true
+
+	case "SubClass.flavor":
+		if e.complexity.SubClass.Flavor == nil {
+			break
+		}
+
+		return e.complexity.SubClass.Flavor(childComplexity), true
+
 	case "SubClass.id":
 		if e.complexity.SubClass.ID == nil {
 			break
@@ -1055,6 +1071,8 @@ var sources = []*ast.Source{
 type SubClass {
   id: ID
   name: String
+  description: String
+  flavor: String
   class: Class
 }
 
@@ -4266,6 +4284,68 @@ func (ec *executionContext) _SubClass_name(ctx context.Context, field graphql.Co
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _SubClass_description(ctx context.Context, field graphql.CollectedField, obj *model.SubClass) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "SubClass",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SubClass_flavor(ctx context.Context, field graphql.CollectedField, obj *model.SubClass) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "SubClass",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Flavor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _SubClass_class(ctx context.Context, field graphql.CollectedField, obj *model.SubClass) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6564,6 +6644,10 @@ func (ec *executionContext) _SubClass(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = ec._SubClass_id(ctx, field, obj)
 		case "name":
 			out.Values[i] = ec._SubClass_name(ctx, field, obj)
+		case "description":
+			out.Values[i] = ec._SubClass_description(ctx, field, obj)
+		case "flavor":
+			out.Values[i] = ec._SubClass_flavor(ctx, field, obj)
 		case "class":
 			out.Values[i] = ec._SubClass_class(ctx, field, obj)
 		default:
