@@ -32,12 +32,19 @@ func mapClassFromDomainToAPI(c domain.Class) *model.Class {
 			Name: &dp.Name,
 		})
 	}
+	msc := []*model.SubClass{}
+	for _, sc := range c.SubClasses {
+		msc = append(msc, &model.SubClass{
+			Name: &sc.Name,
+		})
+	}
 	return &model.Class{
 		ID:                 &c.ID,
 		Name:               &c.Name,
 		HitDie:             &c.HitDie,
 		ProficiencyChoices: &mpc,
 		Proficiencies:      mp,
+		SubClasses:         msc,
 		// map SavingThrows abilities
 		// StartingEquipment: c.StartingEquipment,
 		// ClassLevels:       c.ClassLevels,
