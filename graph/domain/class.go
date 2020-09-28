@@ -19,8 +19,10 @@ type Class struct {
 
 //SubClass defines a character subclass
 type SubClass struct {
-	ID   string
-	Name string
+	ID          string
+	Name        string
+	Description string
+	Flavor      string
 }
 
 //ProficiencyChoice describe the number and choices for Class skill proficiencies
