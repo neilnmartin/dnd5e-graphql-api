@@ -59,6 +59,18 @@ type raceMongoRepo struct {
 }
 
 func mapRaceToDomain(rm *RaceMongo) *domain.Race {
+	dsr := []domain.SubRace{}
+	for _, srm := range rm.SubRaces {
+		dsr = append(dsr, domain.SubRace{
+			Name: srm.Name,
+		})
+	}
+	dt := []domain.Trait{}
+	for _, tm := range rm.Traits {
+		dt = append(dt, domain.Trait{
+			Name: tm.Name,
+		})
+	}
 	return &domain.Race{
 		ID:              rm.ID.Hex(),
 		Name:            rm.Name,
@@ -67,6 +79,7 @@ func mapRaceToDomain(rm *RaceMongo) *domain.Race {
 		Size:            rm.Size,
 		SizeDescription: rm.SizeDescription,
 		Alignment:       rm.Alignment,
+		Traits:          dt,
 	}
 }
 
