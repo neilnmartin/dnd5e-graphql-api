@@ -13,6 +13,10 @@ type RaceRepo interface {
 	GetRaceByID(id string) (*Race, error)
 	GetRaceByName(name string) (*Race, error)
 	GetAllRaces() (*[]*Race, error)
+	//SubRaces
+	GetSubRaceByName(name string) (*SubRace, error)
+	//Traits
+	GetTraitByName(name string) (*Trait, error)
 }
 
 // ClassRepo describes the race repository with Race related methods
