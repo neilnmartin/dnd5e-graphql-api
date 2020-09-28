@@ -19,11 +19,13 @@ func (r *classResolver) SubClasses(ctx context.Context, obj *model.Class) ([]*mo
 			return nil, err
 		}
 		scm = append(scm, &model.SubClass{
-			ID:    &sc.ID,
-			Name:  &sc.Name,
-			Class: obj,
+			ID:          &sc.ID,
+			Name:        &sc.Name,
+			Description: &sc.Description,
+			Flavor:      &sc.Flavor,
 		})
 	}
+
 	return scm, nil
 }
 
