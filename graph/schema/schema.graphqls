@@ -114,7 +114,7 @@ input CreateCharacterInput {
 type Query {
   user: User
   class (name: String!): Class!
-  race: Race
+  race (name: String!): Race!
   races: [Race!]
   classes: [Class!]
 }

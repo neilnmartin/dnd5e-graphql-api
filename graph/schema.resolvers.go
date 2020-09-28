@@ -88,8 +88,13 @@ func (r *queryResolver) Class(ctx context.Context, name string) (*model.Class, e
 	return mapClassFromDomainToAPI(*cd), nil
 }
 
-func (r *queryResolver) Race(ctx context.Context) (*model.Race, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) Race(ctx context.Context, name string) (*model.Race, error) {
+	cd, err := repository.DB.RaceRepo.GetRaceByName(name)
+	if err != nil {
+		return nil, err
+	}
+	log.Printf("\nhit race query resolver,\nfetched domain race: %+v", utils.PrettyPrint(cd))
+	return mapRaceFromDomainToAPI(*cd), nil
 }
 
 func (r *queryResolver) Races(ctx context.Context) ([]*model.Race, error) {
