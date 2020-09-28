@@ -29,5 +29,5 @@ type Trait {
   races: [Race]
   subRaces: [SubRace]
   name: String
-  description: [String]
+  description: String
 }

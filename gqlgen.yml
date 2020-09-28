@@ -62,4 +62,6 @@ models:
     fields:
       subRaces:
         resolver: true
+      traits: 
+        resolver: true
 
