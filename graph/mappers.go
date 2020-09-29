@@ -8,7 +8,7 @@ import (
 // mapper funcs
 
 // i need to see if there's a more readable way to do this but seems like
-// at the moment all i have to work with is for/range
+// at the idiomatic way to work with nested lists is for/range
 
 func mapClassFromDomainToAPI(c domain.Class) *model.Class {
 
@@ -63,8 +63,9 @@ func mapRaceFromDomainToAPI(r domain.Race) *model.Race {
 	}
 	mt := []*model.Trait{}
 	for _, t := range r.Traits {
+		tn := t.Name
 		mt = append(mt, &model.Trait{
-			Name: &t.Name,
+			Name: &tn,
 		})
 	}
 	return &model.Race{
@@ -72,5 +73,13 @@ func mapRaceFromDomainToAPI(r domain.Race) *model.Race {
 		Name:     &r.Name,
 		SubRaces: msr,
 		Traits:   mt,
+	}
+}
+
+func mapTraitFromDomainToAPI(dt domain.Trait) *model.Trait {
+	return &model.Trait{
+		ID:          &dt.ID,
+		Name:        &dt.Name,
+		Description: &dt.Description,
 	}
 }
