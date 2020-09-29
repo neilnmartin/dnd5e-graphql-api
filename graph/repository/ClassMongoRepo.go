@@ -110,10 +110,12 @@ func (c classMongoRepo) GetClassByID(id string) (*domain.Class, error) {
 
 // GetClassByName receives a domain Class and gets a database Class matching its name
 func (c classMongoRepo) GetClassByName(name string) (*domain.Class, error) {
+	sc := c.session.Copy()
+	defer sc.Close()
 	rm := ClassMongo{
 		Name: name,
 	}
-	err := c.session.DB("dnd5e").C("classes").With(c.session.Copy()).Find(bson.M{"name": name}).One(&rm)
+	err := c.session.DB("dnd5e").C("classes").With(sc).Find(bson.M{"name": name}).One(&rm)
 	if err != nil {
 		return nil, err
 	}
@@ -122,10 +124,12 @@ func (c classMongoRepo) GetClassByName(name string) (*domain.Class, error) {
 }
 
 func (c classMongoRepo) GetAllClasses() (*[]*domain.Class, error) {
+	sc := c.session.Copy()
+	defer sc.Close()
 	log.Println("hit mongo repo get all classes")
 	// fetch
 	allClasses := []ClassMongo{}
-	err := c.session.DB("dnd5e").C("classes").With(c.session.Copy()).Find(bson.M{}).All(&allClasses)
+	err := c.session.DB("dnd5e").C("classes").With(sc).Find(bson.M{}).All(&allClasses)
 	if err != nil {
 		return nil, err
 	}
@@ -139,11 +143,13 @@ func (c classMongoRepo) GetAllClasses() (*[]*domain.Class, error) {
 }
 
 func (c classMongoRepo) GetSubClassByName(name string) (*domain.SubClass, error) {
-	log.Printf("\nhit get subclass by name: %+v", name)
+	sc := c.session.Copy()
+	defer sc.Close()
+
 	scm := SubClassMongo{
 		Name: name,
 	}
-	err := c.session.DB("dnd5e").C("subclasses").With(c.session.Copy()).Find(bson.M{"name": name}).One(&scm)
+	err := c.session.DB("dnd5e").C("subclasses").With(sc).Find(bson.M{"name": name}).One(&scm)
 	if err != nil {
 		if err.Error() == "not found" {
 			return nil, domain.ErrSubClassNotFound

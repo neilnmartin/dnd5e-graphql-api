@@ -130,37 +130,64 @@ func (r raceMongoRepo) GetAllRaces() (*[]*domain.Race, error) {
 }
 
 func (r raceMongoRepo) GetSubRaceByName(name string) (*domain.SubRace, error) {
+	sc := r.session.Copy()
+	defer sc.Close()
 	srm := SubRaceMongo{
 		Name: name,
 	}
-	err := r.session.DB("dnd5e").C("subraces").With(r.session.Copy()).Find(bson.M{"name": name}).One(&srm)
+	err := r.session.DB("dnd5e").C("subraces").With(sc).Find(bson.M{"name": name}).One(&srm)
 	if err != nil {
 		if err.Error() == "not found" {
 			return nil, domain.ErrSubRaceNotFound
 		}
 		return nil, err
 	}
-	log.Printf("\nmongo fetched %+v", srm)
 	return &domain.SubRace{
 		Name: srm.Name,
 	}, nil
 }
 
 func (r raceMongoRepo) GetTraitByName(name string) (*domain.Trait, error) {
+	sc := r.session.Copy()
+	defer sc.Close()
+
 	tm := TraitMongo{
 		Name: name,
 	}
-	err := r.session.DB("dnd5e").C("traits").With(r.session.Copy()).Find(bson.M{"name": name}).One(&tm)
+	err := r.session.DB("dnd5e").C("traits").With(sc).Find(bson.M{"name": name}).One(&tm)
 	if err != nil {
 		if err.Error() == "not found" {
 			return nil, domain.ErrTraitNotFound
 		}
 		return nil, err
 	}
-	log.Printf("\nmongo fetched %+v", tm)
 	return &domain.Trait{
 		ID:          tm.ID.Hex(),
 		Name:        tm.Name,
 		Description: tm.Description[0],
 	}, nil
+}
+
+func (r raceMongoRepo) GetTraitsByRaceName(rn string) (*[]*domain.Trait, error) {
+	sc := r.session.Copy()
+	defer sc.Close()
+
+	tmr := []TraitMongo{}
+	err := r.session.DB("dnd5e").C("traits").With(sc).Find(bson.M{"race": rn}).All(&tmr)
+	if err != nil {
+		if err.Error() == "not found" {
+			return nil, domain.ErrTraitNotFound
+		}
+		return nil, err
+	}
+	log.Printf("\nmongo fetched %+v", tmr)
+	dt := []*domain.Trait{}
+	for _, tm := range tmr {
+		dt = append(dt, &domain.Trait{
+			ID:          tm.ID.Hex(),
+			Name:        tm.Name,
+			Description: tm.Description[0],
+		}, nil)
+	}
+	return &dt, nil
 }
