@@ -12,7 +12,7 @@ get, generate, build and run:
 
 ### Tools and packages: 
   - graphql-go
-  - gqlgen for generation of schema
+  - [gqlgen](https://github.com/99designs/gqlgen) for schema-based generation of statically-typed models
   - mgo for mongodb
 
 ### Considerations:
@@ -50,4 +50,4 @@ A list of query-able Dungeons & Dragons 5th Edition entities (not exhaustive):
 
 [There is a tendency in tech to focus on the tool instead of the outcome](https://www.youtube.com/watch?v=GBTdnfD6s5Q)
 So why would I choose to build a graphql server in Go, when one in TypeScript would be so much faster?
-One of the goals of this project is precisely to become more familiar with a tool (in this case the Go programming language) and be able to explore writing idiomatic, efficient code. As a web developer, I to be comfy in with it and expand into writing CLI tools and perhaps contributing to open source Go projects.
+One of the goals of this project is precisely to become more familiar with a tool (in this case the Go programming language) and be able to explore writing idiomatic, efficient code. I want to be comfy doing what I know (web development) and hope to expand into writing my own CLI tools and perhaps contributing to open source down the line.
