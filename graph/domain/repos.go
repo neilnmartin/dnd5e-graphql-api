@@ -28,3 +28,9 @@ type ClassRepo interface {
 	//SubClass
 	GetSubClassByName(name string) (*SubClass, error)
 }
+
+// CharacterRepo describes the character repository with Character related methods
+type CharacterRepo interface {
+	InsertCharacter(c Character) (*Character, error)
+	GetCharacterByUserID(id string) (*Character, error)
+}
