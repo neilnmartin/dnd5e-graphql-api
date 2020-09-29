@@ -10,11 +10,12 @@ gen:
 	go run github.com/99designs/gqlgen generate
 start: 
 	go run ./server.go
-build: 
-	go build -o ./bin/main .
+run:
+	./bin/server
 compile:
 	# Compiling for linux OS and platforms
-	GOOS=freebsd GOARCH=386 go build -o bin/main-freebsd-386 main.go
-	GOOS=linux GOARCH=arm go build -o bin/main-linux-arm main.go
-	GOOS=linux GOARCH=arm64 go build -o bin/main-linux-arm64 main.go
-all: install gen start
+	go build -o ./bin/server .
+	GOOS=freebsd GOARCH=386 go build -o bin/main-freebsd-386 .
+	GOOS=linux GOARCH=arm go build -o bin/main-linux-arm .
+	GOOS=linux GOARCH=arm64 go build -o bin/main-linux-arm64 .
+all: install gen compile run
