@@ -29,20 +29,16 @@ func (r *raceResolver) SubRaces(ctx context.Context, obj *model.Race) ([]*model.
 }
 
 func (r *raceResolver) Traits(ctx context.Context, obj *model.Race) ([]*model.Trait, error) {
-	tsm := []*model.Trait{}
+	mts := []*model.Trait{}
 	for _, tm := range obj.Traits {
-		sc, err := repository.DB.RaceRepo.GetTraitByName(*tm.Name)
+		t, err := repository.DB.RaceRepo.GetTraitByName(*tm.Name)
 		if err != nil {
 			return nil, err
 		}
-		tsm = append(tsm, &model.Trait{
-			ID:          &sc.ID,
-			Name:        &sc.Name,
-			Description: &sc.Description,
-		})
+		mapped := mapTraitFromDomainToAPI(*t)
+		mts = append(mts, mapped)
 	}
-
-	return tsm, nil
+	return mts, nil
 }
 
 // Race returns generated.RaceResolver implementation.

@@ -10,8 +10,6 @@ import (
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/model"
 )
 
-// TODO
-
 //PrettyPrint logging utility to print structs as formatted JSON
 func PrettyPrint(i interface{}) string {
 	s, _ := json.MarshalIndent(i, "", "\t")

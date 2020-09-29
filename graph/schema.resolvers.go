@@ -84,7 +84,6 @@ func (r *queryResolver) Class(ctx context.Context, name string) (*model.Class, e
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("\nhit class query resolver,\nfetched domain class: %+v", utils.PrettyPrint(cd))
 	return mapClassFromDomainToAPI(*cd), nil
 }
 
@@ -93,7 +92,6 @@ func (r *queryResolver) Race(ctx context.Context, name string) (*model.Race, err
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("\nhit race query resolver,\nfetched domain race: %+v", utils.PrettyPrint(cd))
 	return mapRaceFromDomainToAPI(*cd), nil
 }
 
