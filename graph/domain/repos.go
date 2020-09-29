@@ -17,6 +17,7 @@ type RaceRepo interface {
 	GetSubRaceByName(name string) (*SubRace, error)
 	//Traits
 	GetTraitByName(name string) (*Trait, error)
+	GetTraitsByRaceName(rn string) (*[]*Trait, error)
 }
 
 // ClassRepo describes the race repository with Race related methods

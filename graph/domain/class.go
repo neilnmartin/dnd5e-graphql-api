@@ -14,7 +14,6 @@ type Class struct {
 	ClassLevels        []ClassLevel
 	SubClasses         []SubClass
 	Spellcasting       Ability
-	url                string
 }
 
 //SubClass defines a character subclass
