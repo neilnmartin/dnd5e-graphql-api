@@ -8,13 +8,12 @@ import (
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/generated"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/model"
-	"github.com/neilnmartin/dnd5e-graphql-api/graph/repository"
 )
 
 func (r *classResolver) SubClasses(ctx context.Context, obj *model.Class) ([]*model.SubClass, error) {
 	scm := []*model.SubClass{}
 	for _, osc := range obj.SubClasses {
-		sc, err := repository.DB.ClassRepo.GetSubClassByName(*osc.Name)
+		sc, err := db.ClassRepo.GetSubClassByName(*osc.Name)
 		if err != nil {
 			return nil, err
 		}

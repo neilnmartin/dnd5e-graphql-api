@@ -8,13 +8,12 @@ import (
 
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/generated"
 	"github.com/neilnmartin/dnd5e-graphql-api/graph/model"
-	"github.com/neilnmartin/dnd5e-graphql-api/graph/repository"
 )
 
 func (r *raceResolver) SubRaces(ctx context.Context, obj *model.Race) ([]*model.SubRace, error) {
 	scm := []*model.SubRace{}
 	for _, osc := range obj.SubRaces {
-		sc, err := repository.DB.RaceRepo.GetSubRaceByName(osc.Name)
+		sc, err := db.RaceRepo.GetSubRaceByName(osc.Name)
 		if err != nil {
 			return nil, err
 		}
@@ -31,7 +30,7 @@ func (r *raceResolver) SubRaces(ctx context.Context, obj *model.Race) ([]*model.
 func (r *raceResolver) Traits(ctx context.Context, obj *model.Race) ([]*model.Trait, error) {
 	mts := []*model.Trait{}
 	for _, tm := range obj.Traits {
-		t, err := repository.DB.RaceRepo.GetTraitByName(*tm.Name)
+		t, err := db.RaceRepo.GetTraitByName(*tm.Name)
 		if err != nil {
 			return nil, err
 		}
