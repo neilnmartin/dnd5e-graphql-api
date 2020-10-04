@@ -74,9 +74,9 @@ type Character {
   age: Int!
   level: Int!
   ## 5E data
-  race: Race!
+  race: Race
   subRace: SubRace
-  class: Class!
+  class: Class
   subClass: SubClass
   traits: [Trait]
   equipment: [Equipment]
@@ -113,6 +113,7 @@ input CreateCharacterInput {
 
 type Query {
   user: User
+  character: Character
   class (name: String!): Class!
   race (name: String!): Race!
   races: [Race!]

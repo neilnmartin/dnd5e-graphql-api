@@ -64,4 +64,10 @@ models:
         resolver: true
       traits: 
         resolver: true
+  Character:
+    fields:
+      race:
+        resolver: true
+      class: 
+        resolver: true
 
