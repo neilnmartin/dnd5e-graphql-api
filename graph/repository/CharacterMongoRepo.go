@@ -62,3 +62,8 @@ func (m characterMongoRepo) InsertCharacter(dc domain.Character, du domain.User)
 	log.Printf("\ninserted, converted to domain user: \n%+v", cr)
 	return &cr, nil
 }
+
+// InsertCharacter will create a domain User in the database
+func (m characterMongoRepo) GetCharacterByUserID(id string) (*domain.Character, error) {
+	return &domain.Character{}, nil
+}
