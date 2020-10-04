@@ -16,12 +16,14 @@ type Name struct {
 	FamilyName string
 }
 
-// Character describes a user's DnD 5E character
+// Character is a domain aggregate that describes a user's DnD 5E character
 type Character struct {
 	ID   string
 	Name string // character name
 	Race
+	SubRace
 	Class
+	SubClass
 	Level      int8 // small int max 128
 	Equipments []Equipment
 }

@@ -11,6 +11,10 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+type classMongoRepo struct {
+	session *mgo.Session
+}
+
 //SubClassMongo describes the subclass of the Class
 type SubClassMongo struct {
 	ID          bson.ObjectId `json:"_id" bson:"_id"`
@@ -44,10 +48,6 @@ type ClassMongo struct {
 	ProficiencyChoices []ProficiencyChoiceMongo `json:"proficiency_choices" bson:"proficiency_choices"`
 	SubClasses         []SubClassMongo          `json:"subclasses" bson:"subclasses"`
 	Proficiencies      []ProficiencyMongo       `json:"proficiencies" bson:"proficiencies"`
-}
-
-type classMongoRepo struct {
-	session *mgo.Session
 }
 
 func mapClassToDomain(cm *ClassMongo) *domain.Class {
