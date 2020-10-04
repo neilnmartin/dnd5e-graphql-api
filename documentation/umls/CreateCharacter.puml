@@ -1,0 +1,8 @@
+@startuml CreateCharacter
+client -> api: createCharacter (CreateCharacterInput!)
+api -> service: validate inputs, create domain entities for class, race etc.
+service -> repository: insert character
+service -> service: construct domain character aggregate
+service -> api: return character aggregate
+api --> client: return character
+@enduml
