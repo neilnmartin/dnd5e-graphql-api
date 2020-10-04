@@ -20,10 +20,12 @@ type CharacterMongo struct {
 	Race     string        `json:"race" bson:"race"`
 	Class    string        `json:"class" bson:"class"`
 	SubClass string        `json:"subClass" bson:"subClass"`
+	SubRace  string        `json:"subRace" bson:"subRace"`
+	// background string        `json:"background" bson:"background"`
 }
 
 // InsertCharacter will create a domain User in the database
-func (m characterMongoRepo) InsertCharacter(dc domain.Character) (*domain.Character, error) {
+func (m characterMongoRepo) InsertCharacter(dc domain.Character, du domain.User) (*domain.Character, error) {
 	sc := m.session.Copy()
 	defer sc.Close()
 
@@ -40,26 +42,23 @@ func (m characterMongoRepo) InsertCharacter(dc domain.Character) (*domain.Charac
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("\nu.ID: %+v", u.ID)
-	err = sc.DB("dnd5e").C("users").FindId(u.ID).One(&u)
+	err = sc.DB("dnd5e").C("characters").FindId(c.ID).One(&c)
 	if err != nil {
 		if err.Error() == "not found" {
 			return nil, domain.ErrUserNotFound
 		}
 		return nil, err
 	}
-	log.Printf("\n&u after find: %+v", u)
+	log.Printf("\n&u after find: %+v", c)
 
 	// convert to domain user
-	ur := domain.Character{
-		ID:    u.ID.Hex(),
-		Email: u.Email,
-		Name: domain.Name{
-			GivenName:  u.GivenName,
-			FamilyName: u.FamilyName,
-		},
+	cr := domain.Character{
+		ID:       c.ID.Hex(),
+		Race:     domain.Race{Name: c.Race},
+		SubRace:  domain.SubRace{Name: c.SubRace},
+		Class:    domain.Class{Name: c.Class},
+		SubClass: domain.SubClass{Name: c.SubClass},
 	}
-	log.Printf("\ninserted, converted to domain user: \n%+v", ur)
-
-	return &ur, nil
+	log.Printf("\ninserted, converted to domain user: \n%+v", cr)
+	return &cr, nil
 }

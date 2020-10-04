@@ -31,6 +31,6 @@ type ClassRepo interface {
 
 // CharacterRepo describes the character repository with Character related methods
 type CharacterRepo interface {
-	InsertCharacter(c Character) (*Character, error)
+	InsertCharacter(c Character, u User) (*Character, error)
 	GetCharacterByUserID(id string) (*Character, error)
 }
