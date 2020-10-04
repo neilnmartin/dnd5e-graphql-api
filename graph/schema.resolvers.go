@@ -16,6 +16,14 @@ import (
 	"github.com/neilnmartin/dnd5e-graphql-api/utils"
 )
 
+func (r *characterResolver) Race(ctx context.Context, obj *model.Character) (*model.Race, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *characterResolver) Class(ctx context.Context, obj *model.Character) (*model.Class, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *mutationResolver) CreateCharacter(ctx context.Context, input model.CreateCharacterInput) (*model.Character, error) {
 	panic(fmt.Errorf("not implemented"))
 }
@@ -79,6 +87,10 @@ func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *queryResolver) Character(ctx context.Context) (*model.Character, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *queryResolver) Class(ctx context.Context, name string) (*model.Class, error) {
 	cd, err := repository.DB.ClassRepo.GetClassByName(name)
 	if err != nil {
@@ -135,11 +147,15 @@ func (r *queryResolver) Classes(ctx context.Context) ([]*model.Class, error) {
 	return mc, nil
 }
 
+// Character returns generated.CharacterResolver implementation.
+func (r *Resolver) Character() generated.CharacterResolver { return &characterResolver{r} }
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
+type characterResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
