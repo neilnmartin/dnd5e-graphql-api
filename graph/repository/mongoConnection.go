@@ -40,9 +40,13 @@ func createMongoDataSource() datasource {
 	cmr := classMongoRepo{
 		session: session,
 	}
+	chmr := characterMongoRepo{
+		session: session,
+	}
 	return datasource{
-		UserRepo:  umr,
-		RaceRepo:  rmr,
-		ClassRepo: cmr,
+		UserRepo:      umr,
+		RaceRepo:      rmr,
+		ClassRepo:     cmr,
+		CharacterRepo: chmr,
 	}
 }

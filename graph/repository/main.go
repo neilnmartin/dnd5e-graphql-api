@@ -7,9 +7,10 @@ import (
 
 // A datasource that implements a data repository with CRUD for each resource
 type datasource struct {
-	UserRepo  domain.UserRepo
-	RaceRepo  domain.RaceRepo
-	ClassRepo domain.ClassRepo
+	UserRepo      domain.UserRepo
+	RaceRepo      domain.RaceRepo
+	ClassRepo     domain.ClassRepo
+	CharacterRepo domain.CharacterRepo
 }
 
 // datasourceFactory creates a datasource based on a string input p.
