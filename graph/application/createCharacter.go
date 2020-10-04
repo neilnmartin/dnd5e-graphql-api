@@ -8,30 +8,29 @@ import (
 
 //CreateCharacterInput is the input for the CreateCharacterService
 type CreateCharacterInput struct {
-	race       string
-	class      string
-	subClass   string
-	subRace    string
-	background string
-	uid        string
-	name       string
-	cr         domain.CharacterRepo
+	Race       string
+	Class      string
+	SubClass   string
+	SubRace    string
+	Background string
+	UserID     string
+	Name       string
 }
 
 // CreateCharacterService signs up a user by adding to the database after validating name email and password inputs
-func CreateCharacterService(input CreateCharacterInput) (*domain.Character, error) {
-	if &input.uid != nil {
+func CreateCharacterService(input CreateCharacterInput, cr domain.CharacterRepo) (*domain.Character, error) {
+	if &input.UserID != nil {
 		return nil, errors.New("Invalid user id")
 	}
-	u := domain.User{ID: input.uid}
+	u := domain.User{ID: input.UserID}
 	c := domain.Character{
-		Name:     input.name,
-		Race:     domain.Race{Name: input.race},
-		SubRace:  domain.SubRace{Name: input.subRace},
-		Class:    domain.Class{Name: input.class},
-		SubClass: domain.SubClass{Name: input.subClass},
+		Name:     input.Name,
+		Race:     domain.Race{Name: input.Race},
+		SubRace:  domain.SubRace{Name: input.SubRace},
+		Class:    domain.Class{Name: input.Class},
+		SubClass: domain.SubClass{Name: input.SubClass},
 	}
-	created, err := input.cr.InsertCharacter(c, u)
+	created, err := cr.InsertCharacter(c, u)
 	if err != nil {
 		if err == domain.ErrCharacterNotFound {
 			return nil, err

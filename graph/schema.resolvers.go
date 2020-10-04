@@ -25,7 +25,12 @@ func (r *characterResolver) Class(ctx context.Context, obj *model.Character) (*m
 }
 
 func (r *mutationResolver) CreateCharacter(ctx context.Context, input model.CreateCharacterInput) (*model.Character, error) {
-	panic(fmt.Errorf("not implemented"))
+	dc, err := application.CreateCharacterService(application.CreateCharacterInput{
+		Name:  input.Name,
+		Race:  input.Race,
+		Class: input.Class,
+	}, db.CharacterRepo)
+	return &model.Character{}, nil
 }
 
 func (r *mutationResolver) SignUpUser(ctx context.Context, input model.UserInput) (*model.User, error) {
