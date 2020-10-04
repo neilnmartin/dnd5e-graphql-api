@@ -1,0 +1,5 @@
+Database source: docker image fuzzylombax/5e-srd-database
+This database belonged to an open source 5e rest api project, but was very outdated in terms of 5th edition content. 
+Mongodump + mongorestore exported it to my own mongo atlas cluster.
+Will need to update with newer data, the current plan is to write a scraper that will go through dnd 5e wiki sites.
+So far I've decided to continue using the schema, but will probably need to audit and refactor it in some way soon. I don't think it's affected my domain type designs.
