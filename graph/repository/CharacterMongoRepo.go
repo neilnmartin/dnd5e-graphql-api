@@ -25,8 +25,8 @@ type CharacterMongo struct {
 }
 
 // InsertCharacter will create a domain User in the database
-func (m characterMongoRepo) InsertCharacter(dc domain.Character, du domain.User) (*domain.Character, error) {
-	sc := m.session.Copy()
+func (cmr characterMongoRepo) InsertCharacter(dc domain.Character, du domain.User) (*domain.Character, error) {
+	sc := cmr.session.Copy()
 	defer sc.Close()
 
 	c := CharacterMongo{
@@ -64,6 +64,15 @@ func (m characterMongoRepo) InsertCharacter(dc domain.Character, du domain.User)
 }
 
 // InsertCharacter will create a domain User in the database
-func (m characterMongoRepo) GetCharacterByUserID(id string) (*domain.Character, error) {
-	return &domain.Character{}, nil
+func (cmr characterMongoRepo) GetCharacterByUserID(id string) (*domain.Character, error) {
+	// construct character here
+	// concurrent db fetches for domain sub-types
+	dr := domain.Race{}
+	dc := domain.Class{}
+	dsc := domain.SubClass{}
+	return &domain.Character{
+		Race:     dr,
+		Class:    dc,
+		SubClass: dsc,
+	}, nil
 }

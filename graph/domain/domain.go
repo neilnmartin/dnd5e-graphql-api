@@ -24,14 +24,17 @@ type Character struct {
 	SubRace
 	Class
 	SubClass
-	Level      int8 // small int max 128
-	Equipments []Equipment
+	CurrentLevel  int8 // small int max 128
+	Proficiencies []Proficiency
+	Equipments    []Equipment
 }
 
 //Skill describes a character's ability-based skill
 type Skill struct {
+	Name string
 }
 
 //Ability describes the base character abilities and associated scores
 type Ability struct {
+	Name string
 }
