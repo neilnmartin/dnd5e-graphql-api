@@ -26,10 +26,11 @@ func (r *characterResolver) Class(ctx context.Context, obj *model.Character) (*m
 
 func (r *mutationResolver) CreateCharacter(ctx context.Context, input model.CreateCharacterInput) (*model.Character, error) {
 	dc, err := application.CreateCharacterService(application.CreateCharacterInput{
-		Name:  input.Name,
-		Race:  input.Race,
-		Class: input.Class,
+		Name:  *input.Name,
+		Race:  *input.Race,
+		Class: *input.Class,
 	}, db.CharacterRepo)
+	utils.PrettyPrint(dc)
 	return &model.Character{}, nil
 }
 
