@@ -30,7 +30,7 @@ func GenerateJWT(tokenInput IDToken) (*string, error) {
 	claims["id"] = tokenInput.ID
 	claims["name"] = tokenInput.Name
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-	ts, err := token.SignedString(secretKey)
+	ts, err := token.SignedString([]byte(secretKey))
 	if err != nil {
 		log.Printf("Error signing jwt: %+v", err)
 		return nil, err

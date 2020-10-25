@@ -30,6 +30,9 @@ func (r *mutationResolver) CreateCharacter(ctx context.Context, input model.Crea
 		Race:  *input.Race,
 		Class: *input.Class,
 	}, db.CharacterRepo)
+	if err != nil {
+		return nil, err
+	}
 	utils.PrettyPrint(dc)
 	return &model.Character{}, nil
 }
