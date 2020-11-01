@@ -40,6 +40,7 @@ func (m userMongoRepo) InsertUser(ui domain.User) (*domain.User, error) {
 		GivenName:  ui.Name.GivenName,
 		FamilyName: ui.Name.FamilyName,
 		Password:   ui.Password,
+		thing
 	}
 
 	err := sc.DB("dnd5e").C("users").Insert(u)
