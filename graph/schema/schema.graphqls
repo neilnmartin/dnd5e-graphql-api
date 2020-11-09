@@ -65,6 +65,17 @@ type Spell {
   concentration: String
 }
 
+type Game {
+  id: ID!
+  owner: User
+}
+
+type Party {
+  id: ID!
+  gameId: ID
+  characters: [Character]
+}
+
 type Character {
   # identification
   id: ID
@@ -80,6 +91,7 @@ type Character {
   subClass: SubClass
   traits: [Trait]
   equipment: [Equipment]
+  savingThrows: [Int]
 }
 
 # Mutations
@@ -108,11 +120,21 @@ input CreateCharacterInput {
   name: String
   race: String
   class: String
+  level: Int
+  background: String
+
   # background: String
+}
+
+input createPartyInput {
+  gameId: ID
+  name: String
+  characterIds: [ID]
 }
 
 type Query {
   user: User
+  party: Party
   character: Character
   class (name: String!): Class!
   race (name: String!): Race!
@@ -121,6 +143,7 @@ type Query {
 }
 
 type Mutation {
+  createParty(input: createPartyInput!): Party
   createCharacter(input: CreateCharacterInput!): Character!
   signUpUser(input: UserInput!): User!
   loginUser(input: LoginInput!): LoginResponse!
