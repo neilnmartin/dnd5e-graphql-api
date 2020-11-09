@@ -65,6 +65,11 @@ type Feature struct {
 	Description []*string `json:"description"`
 }
 
+type Game struct {
+	ID    string `json:"id"`
+	Owner *User  `json:"owner"`
+}
+
 type Language struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
@@ -89,6 +94,12 @@ type Name struct {
 type NameInput struct {
 	GivenName  string `json:"givenName"`
 	FamilyName string `json:"familyName"`
+}
+
+type Party struct {
+	ID         string       `json:"id"`
+	GameID     *string      `json:"gameId"`
+	Characters []*Character `json:"characters"`
 }
 
 type Proficiency struct {
@@ -177,4 +188,10 @@ type UserInput struct {
 	Name     *NameInput `json:"name"`
 	Email    string     `json:"email"`
 	Password string     `json:"password"`
+}
+
+type CreatePartyInput struct {
+	GameID       *string   `json:"gameId"`
+	Name         *string   `json:"name"`
+	CharacterIds []*string `json:"characterIds"`
 }

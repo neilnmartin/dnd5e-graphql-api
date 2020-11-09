@@ -103,6 +103,11 @@ type ComplexityRoot struct {
 		Name        func(childComplexity int) int
 	}
 
+	Game struct {
+		ID    func(childComplexity int) int
+		Owner func(childComplexity int) int
+	}
+
 	Language struct {
 		ID   func(childComplexity int) int
 		Name func(childComplexity int) int
@@ -115,6 +120,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		CreateCharacter func(childComplexity int, input model.CreateCharacterInput) int
+		CreateParty     func(childComplexity int, input model.CreatePartyInput) int
 		LoginUser       func(childComplexity int, input model.LoginInput) int
 		SignUpUser      func(childComplexity int, input model.UserInput) int
 	}
@@ -123,6 +129,12 @@ type ComplexityRoot struct {
 		FamilyName func(childComplexity int) int
 		Formatted  func(childComplexity int) int
 		GivenName  func(childComplexity int) int
+	}
+
+	Party struct {
+		Characters func(childComplexity int) int
+		GameID     func(childComplexity int) int
+		ID         func(childComplexity int) int
 	}
 
 	Proficiency struct {
@@ -139,6 +151,7 @@ type ComplexityRoot struct {
 		Character func(childComplexity int) int
 		Class     func(childComplexity int, name string) int
 		Classes   func(childComplexity int) int
+		Party     func(childComplexity int) int
 		Race      func(childComplexity int, name string) int
 		Races     func(childComplexity int) int
 		User      func(childComplexity int) int
@@ -226,12 +239,14 @@ type ClassResolver interface {
 	SubClasses(ctx context.Context, obj *model.Class) ([]*model.SubClass, error)
 }
 type MutationResolver interface {
+	CreateParty(ctx context.Context, input model.CreatePartyInput) (*model.Party, error)
 	CreateCharacter(ctx context.Context, input model.CreateCharacterInput) (*model.Character, error)
 	SignUpUser(ctx context.Context, input model.UserInput) (*model.User, error)
 	LoginUser(ctx context.Context, input model.LoginInput) (*model.LoginResponse, error)
 }
 type QueryResolver interface {
 	User(ctx context.Context) (*model.User, error)
+	Party(ctx context.Context) (*model.Party, error)
 	Character(ctx context.Context) (*model.Character, error)
 	Class(ctx context.Context, name string) (*model.Class, error)
 	Race(ctx context.Context, name string) (*model.Race, error)
@@ -511,6 +526,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Feature.Name(childComplexity), true
 
+	case "Game.id":
+		if e.complexity.Game.ID == nil {
+			break
+		}
+
+		return e.complexity.Game.ID(childComplexity), true
+
+	case "Game.owner":
+		if e.complexity.Game.Owner == nil {
+			break
+		}
+
+		return e.complexity.Game.Owner(childComplexity), true
+
 	case "Language.id":
 		if e.complexity.Language.ID == nil {
 			break
@@ -550,6 +579,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateCharacter(childComplexity, args["input"].(model.CreateCharacterInput)), true
+
+	case "Mutation.createParty":
+		if e.complexity.Mutation.CreateParty == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createParty_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateParty(childComplexity, args["input"].(model.CreatePartyInput)), true
 
 	case "Mutation.loginUser":
 		if e.complexity.Mutation.LoginUser == nil {
@@ -595,6 +636,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Name.GivenName(childComplexity), true
+
+	case "Party.characters":
+		if e.complexity.Party.Characters == nil {
+			break
+		}
+
+		return e.complexity.Party.Characters(childComplexity), true
+
+	case "Party.gameId":
+		if e.complexity.Party.GameID == nil {
+			break
+		}
+
+		return e.complexity.Party.GameID(childComplexity), true
+
+	case "Party.id":
+		if e.complexity.Party.ID == nil {
+			break
+		}
+
+		return e.complexity.Party.ID(childComplexity), true
 
 	case "Proficiency.name":
 		if e.complexity.Proficiency.Name == nil {
@@ -649,6 +711,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Classes(childComplexity), true
+
+	case "Query.party":
+		if e.complexity.Query.Party == nil {
+			break
+		}
+
+		return e.complexity.Query.Party(childComplexity), true
 
 	case "Query.race":
 		if e.complexity.Query.Race == nil {
@@ -1214,6 +1283,17 @@ type Spell {
   concentration: String
 }
 
+type Game {
+  id: ID!
+  owner: User
+}
+
+type Party {
+  id: ID!
+  gameId: ID
+  characters: [Character]
+}
+
 type Character {
   # identification
   id: ID
@@ -1260,8 +1340,15 @@ input CreateCharacterInput {
   # background: String
 }
 
+input createPartyInput {
+  gameId: ID
+  name: String
+  characterIds: [ID]
+}
+
 type Query {
   user: User
+  party: Party
   character: Character
   class (name: String!): Class!
   race (name: String!): Race!
@@ -1270,6 +1357,7 @@ type Query {
 }
 
 type Mutation {
+  createParty(input: createPartyInput!): Party
   createCharacter(input: CreateCharacterInput!): Character!
   signUpUser(input: UserInput!): User!
   loginUser(input: LoginInput!): LoginResponse!
@@ -1288,6 +1376,21 @@ func (ec *executionContext) field_Mutation_createCharacter_args(ctx context.Cont
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("input"))
 		arg0, err = ec.unmarshalNCreateCharacterInput2githubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐCreateCharacterInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createParty_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.CreatePartyInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("input"))
+		arg0, err = ec.unmarshalNcreatePartyInput2githubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐCreatePartyInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2537,6 +2640,71 @@ func (ec *executionContext) _Feature_description(ctx context.Context, field grap
 	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Game_id(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Game",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Game_owner(ctx context.Context, field graphql.CollectedField, obj *model.Game) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Game",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Owner, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Language_id(ctx context.Context, field graphql.CollectedField, obj *model.Language) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -2671,6 +2839,44 @@ func (ec *executionContext) _LoginResponse_token(ctx context.Context, field grap
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_createParty(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Mutation",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_createParty_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateParty(rctx, args["input"].(model.CreatePartyInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Party)
+	fc.Result = res
+	return ec.marshalOParty2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐParty(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_createCharacter(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2895,6 +3101,102 @@ func (ec *executionContext) _Name_formatted(ctx context.Context, field graphql.C
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Party_id(ctx context.Context, field graphql.CollectedField, obj *model.Party) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Party",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Party_gameId(ctx context.Context, field graphql.CollectedField, obj *model.Party) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Party",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GameID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOID2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Party_characters(ctx context.Context, field graphql.CollectedField, obj *model.Party) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Party",
+		Field:    field,
+		Args:     nil,
+		IsMethod: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Characters, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Character)
+	fc.Result = res
+	return ec.marshalOCharacter2ᚕᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐCharacter(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Proficiency_name(ctx context.Context, field graphql.CollectedField, obj *model.Proficiency) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3048,6 +3350,37 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	res := resTmp.(*model.User)
 	fc.Result = res
 	return ec.marshalOUser2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Query_party(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:   "Query",
+		Field:    field,
+		Args:     nil,
+		IsMethod: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Party(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Party)
+	fc.Result = res
+	return ec.marshalOParty2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐParty(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_character(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -5992,6 +6325,42 @@ func (ec *executionContext) unmarshalInputUserInput(ctx context.Context, obj int
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputcreatePartyInput(ctx context.Context, obj interface{}) (model.CreatePartyInput, error) {
+	var it model.CreatePartyInput
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "gameId":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("gameId"))
+			it.GameID, err = ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "name":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("name"))
+			it.Name, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "characterIds":
+			var err error
+
+			ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithField("characterIds"))
+			it.CharacterIds, err = ec.unmarshalOID2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -6265,6 +6634,35 @@ func (ec *executionContext) _Feature(ctx context.Context, sel ast.SelectionSet, 
 	return out
 }
 
+var gameImplementors = []string{"Game"}
+
+func (ec *executionContext) _Game(ctx context.Context, sel ast.SelectionSet, obj *model.Game) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, gameImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Game")
+		case "id":
+			out.Values[i] = ec._Game_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "owner":
+			out.Values[i] = ec._Game_owner(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var languageImplementors = []string{"Language"}
 
 func (ec *executionContext) _Language(ctx context.Context, sel ast.SelectionSet, obj *model.Language) graphql.Marshaler {
@@ -6344,6 +6742,8 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
+		case "createParty":
+			out.Values[i] = ec._Mutation_createParty(ctx, field)
 		case "createCharacter":
 			out.Values[i] = ec._Mutation_createCharacter(ctx, field)
 			if out.Values[i] == graphql.Null {
@@ -6393,6 +6793,37 @@ func (ec *executionContext) _Name(ctx context.Context, sel ast.SelectionSet, obj
 			}
 		case "formatted":
 			out.Values[i] = ec._Name_formatted(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var partyImplementors = []string{"Party"}
+
+func (ec *executionContext) _Party(ctx context.Context, sel ast.SelectionSet, obj *model.Party) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, partyImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Party")
+		case "id":
+			out.Values[i] = ec._Party_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "gameId":
+			out.Values[i] = ec._Party_gameId(ctx, field, obj)
+		case "characters":
+			out.Values[i] = ec._Party_characters(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6480,6 +6911,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_user(ctx, field)
+				return res
+			})
+		case "party":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_party(ctx, field)
 				return res
 			})
 		case "character":
@@ -7519,6 +7961,11 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
+func (ec *executionContext) unmarshalNcreatePartyInput2githubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐCreatePartyInput(ctx context.Context, v interface{}) (model.CreatePartyInput, error) {
+	res, err := ec.unmarshalInputcreatePartyInput(ctx, v)
+	return res, graphql.WrapErrorWithInputPath(ctx, err)
+}
+
 func (ec *executionContext) marshalOAbility2ᚕᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐAbility(ctx context.Context, sel ast.SelectionSet, v []*model.Ability) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -7595,6 +8042,46 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 		return graphql.Null
 	}
 	return graphql.MarshalBoolean(*v)
+}
+
+func (ec *executionContext) marshalOCharacter2ᚕᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐCharacter(ctx context.Context, sel ast.SelectionSet, v []*model.Character) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOCharacter2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐCharacter(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+	return ret
 }
 
 func (ec *executionContext) marshalOCharacter2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐCharacter(ctx context.Context, sel ast.SelectionSet, v *model.Character) graphql.Marshaler {
@@ -7792,6 +8279,42 @@ func (ec *executionContext) marshalOFeature2ᚖgithubᚗcomᚋneilnmartinᚋdnd5
 	return ec._Feature(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOID2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithFieldInputContext(ctx, graphql.NewFieldInputWithIndex(i))
+		res[i], err = ec.unmarshalOID2ᚖstring(ctx, vSlice[i])
+		if err != nil {
+			return nil, graphql.WrapErrorWithInputPath(ctx, err)
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOID2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalOID2ᚖstring(ctx, sel, v[i])
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
 	if v == nil {
 		return nil, nil
@@ -7867,6 +8390,13 @@ func (ec *executionContext) marshalOLanguage2ᚖgithubᚗcomᚋneilnmartinᚋdnd
 		return graphql.Null
 	}
 	return ec._Language(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOParty2ᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐParty(ctx context.Context, sel ast.SelectionSet, v *model.Party) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Party(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOProficiency2ᚕᚖgithubᚗcomᚋneilnmartinᚋdnd5eᚑgraphqlᚑapiᚋgraphᚋmodelᚐProficiency(ctx context.Context, sel ast.SelectionSet, v []*model.Proficiency) graphql.Marshaler {

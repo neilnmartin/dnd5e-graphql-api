@@ -24,6 +24,10 @@ func (r *characterResolver) Class(ctx context.Context, obj *model.Character) (*m
 	panic(fmt.Errorf("not implemented"))
 }
 
+func (r *mutationResolver) CreateParty(ctx context.Context, input model.CreatePartyInput) (*model.Party, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
 func (r *mutationResolver) CreateCharacter(ctx context.Context, input model.CreateCharacterInput) (*model.Character, error) {
 	dc, err := application.CreateCharacterService(application.CreateCharacterInput{
 		Name:  *input.Name,
@@ -93,6 +97,10 @@ func (r *mutationResolver) LoginUser(ctx context.Context, input model.LoginInput
 }
 
 func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) Party(ctx context.Context) (*model.Party, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
