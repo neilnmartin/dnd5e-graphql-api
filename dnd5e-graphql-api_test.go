@@ -1,4 +1,4 @@
-package test
+package main
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ import (
 )
 
 // RunTestAPI sets up and runs tests
-func RunTestAPI(t *testing.T) {
+func Test(t *testing.T) {
 	t.Run("Log In User", func(t *testing.T) {
 		var loginResponse struct {
 			data struct {
@@ -70,6 +70,9 @@ func RunTestAPI(t *testing.T) {
 			fmt.Println(err)
 		}
 		resBody, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			fmt.Println(err)
+		}
 		res.Body.Close()
 		respBody := json.Unmarshal(resBody, &loginResponse)
 
