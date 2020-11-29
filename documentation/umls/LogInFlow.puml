@@ -1,4 +1,4 @@
-@startuml SignUpFlow
+@startuml LogInFlow
 client -> api: loginUser mutation
 api -> api: validate email input, check if existing user
 api -> client: if existing user compare password hash
