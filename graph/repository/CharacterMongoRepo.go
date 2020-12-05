@@ -24,7 +24,7 @@ type CharacterMongo struct {
 	// background string        `json:"background" bson:"background"`
 }
 
-// InsertCharacter will create a domain User in the database
+// InsertCharacter will create a domain Character in the database
 func (cmr characterMongoRepo) InsertCharacter(dc domain.Character, du domain.User) (*domain.Character, error) {
 	sc := cmr.session.Copy()
 	defer sc.Close()
@@ -45,7 +45,7 @@ func (cmr characterMongoRepo) InsertCharacter(dc domain.Character, du domain.Use
 	err = sc.DB("dnd5e").C("characters").FindId(c.ID).One(&c)
 	if err != nil {
 		if err.Error() == "not found" {
-			return nil, domain.ErrUserNotFound
+			return nil, domain.ErrCharacterNotFound
 		}
 		return nil, err
 	}
@@ -63,13 +63,27 @@ func (cmr characterMongoRepo) InsertCharacter(dc domain.Character, du domain.Use
 	return &cr, nil
 }
 
-// InsertCharacter will create a domain User in the database
+// GetCharacterByUserID will fetch a character belonging to a specific user
 func (cmr characterMongoRepo) GetCharacterByUserID(id string) (*domain.Character, error) {
-	// construct character here
-	// concurrent db fetches for domain sub-types
+	sc := cmr.session.Copy()
+	defer sc.Close()
+
 	dr := domain.Race{}
 	dc := domain.Class{}
 	dsc := domain.SubClass{}
+
+	mchar := domain.Character{}
+
+	err := sc.DB("dnd5e").C("characters").Find("{\"userId\": string}").One(&mchar)
+	if err != nil {
+		if err.Error() == "not found" {
+			return nil, domain.ErrCharacterNotFound
+		}
+		return nil, err
+	}
+
+	// fetch race, class, etc.
+
 	return &domain.Character{
 		Race:     dr,
 		Class:    dc,
