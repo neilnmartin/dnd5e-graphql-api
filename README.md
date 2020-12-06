@@ -19,9 +19,9 @@ get, generate, build and run:
 
   Domain Driven: DDD is a design pattern that revolves around the definition of domain entities and aggregates, and the decoupling of outside dependencies. The scale of this service is still small enough not to require heavily domain driven architecture but basic ideas like decoupling of infrastructure and persistence layers are still useful. 
 
-  SQL database. A lot of the data types are relational (i.e. SubRace -> Race, etc.) BUT there are a number of data objects that have arbitrary properties based on class/race/equipment etc. that may not be predictable as updates to 5E are rolled out. I need the schema to be easily mutable, therefore need a document store. Also a lot of the aggregate queries could be incredibly slow, potentially.
+  Document store. A lot of the data types are relational (i.e. SubRace -> Race, etc.) BUT there are a number of data objects that have arbitrary properties based on class/race/equipment etc. that may not be predictable as updates to 5E are rolled out. I need the schema to be easily mutable, therefore need a document store. Also a lot of the aggregate queries could be incredibly slow, potentially.
 
-  Identity management: currently the plan is to have boilerplate auth flows within the graphql api. But in the future may consider splitting into a federation (since gqlgen has support for that with a config) and having a dedicated identity microservice.
+  Identity management: the plan is to have boilerplate auth flows within the graphql api. But in the future may consider splitting into a federation (since gqlgen has support for that with a config) and having a dedicated identity microservice.
 
   Deployment: Google App Engine? Terraform + AWS?
   
@@ -33,7 +33,7 @@ get, generate, build and run:
   - character details management
 
 
-A list of query-able Dungeons & Dragons 5th Edition entities (not exhaustive):
+A publicly queryable list of query-able Dungeons & Dragons 5th Edition entities (not exhaustive):
 - Race
 - Subrace
 - Class
@@ -49,5 +49,4 @@ A list of query-able Dungeons & Dragons 5th Edition entities (not exhaustive):
 
 
 [There is a tendency in tech to focus on the tool instead of the outcome](https://www.youtube.com/watch?v=GBTdnfD6s5Q)
-So why would I choose to build a graphql server in Go, when one in TypeScript would be so much faster?
-One of the goals of this project is precisely to become more familiar with a tool (in this case the Go programming language) and be able to explore writing idiomatic, efficient code. I want to be comfy doing what I know (web development) and hope to expand into writing my own CLI tools and perhaps contributing to open source down the line.
+One of the goals of this project is precisely to become more familiar with a tool (in this case the Go programming language) and be able to explore writing idiomatic, efficient code. I want to be comfy doing what I know (web development) with what I have experience with (GraphQL). Hope to expand into writing my own CLI tools and perhaps contributing to open source down the line.
